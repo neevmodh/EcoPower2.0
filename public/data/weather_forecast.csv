@@ -1,0 +1,8 @@
+date,city,condition,tempHigh,tempLow,cloudCover,solarIrradiance,windSpeed,humidity,forecastedGenKwh,lat,lon
+2026-03-01,Surat,Sunny,34,22,10,820,12,45,8.6,21.1702,72.8311
+2026-03-02,Surat,Partly Cloudy,32,21,35,580,15,52,6.1,21.1702,72.8311
+2026-03-03,Surat,Sunny,35,23,8,850,10,40,8.9,21.1702,72.8311
+2026-03-04,Surat,Cloudy,29,20,70,280,20,68,2.9,21.1702,72.8311
+2026-03-05,Surat,Partly Cloudy,31,21,40,540,18,58,5.7,21.1702,72.8311
+2026-03-06,Surat,Sunny,36,24,5,880,8,38,9.2,21.1702,72.8311
+2026-03-07,Surat,Sunny,35,23,12,800,11,42,8.4,21.1702,72.8311

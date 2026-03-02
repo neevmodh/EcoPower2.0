@@ -1,0 +1,21 @@
+{
+    "name": "EcoPower",
+    "short_name": "EcoPower",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#050908",
+    "theme_color": "#00C864",
+    "description": "Smart Solar Energy Management Platform",
+    "icons": [
+        {
+            "src": "/vite.svg",
+            "sizes": "192x192",
+            "type": "image/svg+xml"
+        },
+        {
+            "src": "/vite.svg",
+            "sizes": "512x512",
+            "type": "image/svg+xml"
+        }
+    ]
+}

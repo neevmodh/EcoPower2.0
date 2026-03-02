@@ -1,0 +1,6 @@
+id,userId,ticketNo,type,title,description,status,priority,assignedTo,createdAt,updatedAt,resolvedAt
+TKT001,USR002,#TKT-2026-001,Power Cut,Inverter showing error E03,No power since 6AM. Solar inverter error code E03. Checked all breakers - fine.,resolved,high,Field Engineer Rahul,2026-01-16 06:30:00,2026-01-16 11:00:00,2026-01-15 11:00:00
+TKT002,USR002,#TKT-2026-002,Meter Fault,Meter reading 15% higher,February meter reading shows higher than actual. Manual reading differs.,open,medium,,2026-03-02 09:00:00,2026-03-02 09:00:00,
+TKT003,USR002,#TKT-2026-003,Inverter Issue,Battery not charging,Solar inverter not charging battery since morning.,in_progress,high,Tech Priya,2026-02-21 08:00:00,2026-02-21 14:00:00,
+TKT004,USR003,#TKT-2026-004,Low Voltage,Voltage drops in evening,Voltage dropping to 180V at 6-9PM. Appliances affected.,resolved,high,Engineer Karan,2026-01-29 19:00:00,2026-02-02 10:00:00,2026-02-01 10:00:00
+TKT005,USR003,#TKT-2026-005,Billing Issue,Extra charges January,Grid import charges incorrect. Difference of Rs.245.,open,medium,,2026-02-11 11:00:00,2026-02-11 11:00:00,

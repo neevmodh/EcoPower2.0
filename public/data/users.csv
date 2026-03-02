@@ -1,0 +1,4 @@
+id,email,password,name,role,plan,planId,address,city,state,pincode,phone,roofArea,connectionId,meterNo,joinDate,status,solarKw,batteryKwh
+USR001,neevmodh205@gmail.com,neev@123,Neev Modh,admin,Solar Pro,PLAN003,42 Green Valley Road,Ahmedabad,Gujarat,380015,9876543210,1200,EESL-AHD-001,MTR-2023-001,2024-01-15,active,15,20
+USR002,modh4001@gmail.com,modh4001,Modh,customer,Solar Premium,PLAN002,15 Sunrise Apt Sector 4,Surat,Gujarat,395001,9876543211,850,EESL-SRT-002,MTR-2023-002,2024-02-20,active,10,10
+USR003,demo@ecopower.in,Demo@123,Demo User,customer,Solar Basic,PLAN001,7 Solar Street,Vadodara,Gujarat,390001,9988776655,600,EESL-VDR-003,MTR-2023-003,2024-03-01,active,5,5

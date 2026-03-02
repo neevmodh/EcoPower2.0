@@ -1,0 +1,10 @@
+id,userId,name,type,powerWatts,status,location,scheduleOn,scheduleOff,addedDate
+DEV001,USR002,Split AC 1.5T,hvac,1500,on,Bedroom,09:00,17:00,2024-02-20
+DEV002,USR002,Refrigerator,appliance,150,on,Kitchen,00:00,23:59,2024-02-20
+DEV003,USR002,Water Heater,heating,2000,off,Bathroom,06:00,07:30,2024-02-20
+DEV004,USR002,Washing Machine,appliance,500,off,Utility,10:00,12:00,2024-02-20
+DEV005,USR002,LED Lights x10,lighting,100,on,All Rooms,18:00,22:30,2024-02-20
+DEV006,USR002,EV Charger,ev,3300,off,Garage,23:00,05:00,2024-06-01
+DEV007,USR003,Ceiling Fans x3,cooling,225,on,Rooms,06:00,22:00,2024-03-01
+DEV008,USR003,TV 55 inch,entertainment,180,off,Living,19:00,23:00,2024-03-01
+DEV009,USR003,Water Pump,motor,750,on,Terrace,07:00,08:00,2024-03-01

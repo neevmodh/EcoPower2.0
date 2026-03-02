@@ -1,0 +1,8 @@
+id,userId,type,title,message,isRead,createdAt
+NOT001,USR002,solar_alert,High Solar Generation,Your system generating at 95% capacity — peak performance!,false,2026-03-01 11:30:00
+NOT002,USR002,maintenance,Battery Check Due,Scheduled battery maintenance due next week. Book now.,false,2026-02-28 09:00:00
+NOT003,USR002,invoice,Invoice Ready,Invoice ECO-2026-003 for March 2026 ready. ₹3314.26,true,2026-03-01 00:01:00
+NOT004,USR002,weather,Sunny Week Ahead,5 sunny days forecast — expect high generation all week!,false,2026-03-01 07:00:00
+NOT005,USR002,usage_warning,Usage at 75%,You have used 75% of monthly energy limit.,true,2026-02-25 18:00:00
+NOT006,USR003,invoice,Invoice Ready,Invoice ECO-2026-006 for March 2026 ready. ₹1799.66,false,2026-03-01 00:01:00
+NOT007,USR003,usage_warning,Usage at 90%,Alert: 90% of monthly allocation used. Reduce usage.,false,2026-02-27 20:00:00

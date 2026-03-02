@@ -1,0 +1,4 @@
+id,userId,planId,planName,startDate,endDate,status,billingCycle,lastBilled,nextBilling,autoRenew
+SUB001,USR001,PLAN003,Solar Pro,2025-01-16,2026-01-16,active,monthly,2026-02-15,2026-03-15,true
+SUB002,USR002,PLAN002,Solar Premium,2025-02-21,2026-02-21,active,monthly,2026-02-20,2026-03-20,true
+SUB003,USR003,PLAN001,Solar Basic,2025-03-03,2026-03-02,active,monthly,2026-03-01,2026-04-01,true

@@ -1,0 +1,4 @@
+id,name,monthlyPrice,annualPrice,solarKw,batteryKwh,monitoring,gridSync,prioritySupport,smartLoad,aiAdvisor,description,recommended,color
+PLAN001,Solar Basic,1499,14390,5,5,basic,true,false,false,false,Perfect for small homes with moderate energy needs,false,#3B82F6
+PLAN002,Solar Premium,2999,28790,10,10,advanced,true,true,false,true,Ideal for homes and small businesses,true,#00C864
+PLAN003,Solar Pro,4999,47990,15,20,premium,true,true,true,true,Maximum capacity for large homes and businesses,false,#8B5CF6

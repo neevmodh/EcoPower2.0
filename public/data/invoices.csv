@@ -1,0 +1,7 @@
+id,userId,invoiceNo,period,planName,planFee,gridImportKwh,gridImportRate,gridImportCharge,gridExportKwh,gridExportRate,gridExportCredit,serviceTax,totalAmount,status,dueDate,paidDate,paymentMethod,notes
+INV001,USR002,ECO-2026-001,January 2026,Solar Premium,2999.00,15.4,8.00,123.20,42.8,5.00,214.00,18,3427.68,paid,2026-01-02,2026-02-03,UPI,On time
+INV002,USR002,ECO-2026-002,February 2026,Solar Premium,2999.00,12.6,8.00,100.80,38.2,5.00,191.00,18,3369.92,paid,2026-01-30,2026-03-01,Credit Card,On time
+INV003,USR002,ECO-2026-003,March 2026,Solar Premium,2999.00,10.2,8.00,81.60,45.1,5.00,225.50,18,3314.26,pending,2026-03-02,,,
+INV004,USR003,ECO-2026-004,January 2026,Solar Basic,1499.00,22.1,8.00,176.80,18.2,5.00,91.00,18,1871.32,paid,2026-01-02,2026-02-04,Wallet,On time
+INV005,USR003,ECO-2026-005,February 2026,Solar Basic,1499.00,19.8,8.00,158.40,16.5,5.00,82.50,18,1853.89,paid,2026-01-30,2026-03-02,UPI,On time
+INV006,USR003,ECO-2026-006,March 2026,Solar Basic,1499.00,18.3,8.00,146.40,19.1,5.00,95.50,18,1799.66,pending,2026-03-02,,,
