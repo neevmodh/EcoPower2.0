@@ -38,4 +38,4 @@ git add .
 git commit -m "Fix data mappings and polish UI for demo"
 
 git remote add origin https://github.com/neevmodh/EcoPower2.0.git
-git push -u origin main
+git push origin HEAD:main --force
