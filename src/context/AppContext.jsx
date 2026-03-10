@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { getCurrentUser } from '../services/authService';
 import { apiService } from '../services/apiService';
+import mqtt from 'mqtt';
 
 const AppContext = createContext(null);
 
@@ -45,6 +46,49 @@ export function AppProvider({ children }) {
         init();
     }, []);
 
+    // Connect to HiveMQ public broker for real-time Live Telemetry Data
+    useEffect(() => {
+        const client = mqtt.connect('wss://broker.hivemq.com:8884/mqtt', {
+            clientId: `ecopower_web_${Math.random().toString(16).slice(3)}`
+        });
+
+        client.on('connect', () => {
+            console.log('✅ Connected to HiveMQ WebSocket Broker');
+            client.subscribe('ecopower/usr001/meter');
+        });
+
+        client.on('message', (topic, message) => {
+            try {
+                const payload = JSON.parse(message.toString());
+                if (topic === 'ecopower/usr001/meter') {
+                    setLiveReading(prev => {
+                        const solar = payload.solar_generation !== undefined ? parseFloat(payload.solar_generation) : prev.solarGen;
+                        const gIn = payload.grid_import !== undefined ? parseFloat(payload.grid_import) : prev.gridImport;
+                        const cons = parseFloat((solar + gIn).toFixed(2));
+                        const gOut = solar > cons ? parseFloat((solar - cons).toFixed(2)) : 0;
+
+                        return {
+                            ...prev,
+                            solarGen: solar,
+                            consumption: cons,
+                            gridImport: gIn,
+                            gridExport: gOut,
+                            batteryLevel: payload.battery_level !== undefined ? payload.battery_level : prev.batteryLevel,
+                            voltage: 230 + (Math.random() * 2 - 1), // Simulate some fluctuation
+                            frequency: 50 + (Math.random() * 0.1 - 0.05)
+                        };
+                    });
+                }
+            } catch (err) {
+                console.error("MQTT Parse Error:", err);
+            }
+        });
+
+        return () => {
+            if (client) client.end();
+        }
+    }, []);
+
     // Calculate unread notifications when data or user changes
     useEffect(() => {
         if (currentUser && csvData.notifications.length > 0) {
@@ -69,7 +113,7 @@ export function AppProvider({ children }) {
             const subscriptions = [];
 
             let users = [], readings = [], invoices = [], tickets = [], transactions = [], notifications = [], devices = [];
-            
+
             if (user && user.id) {
                 const targetId = user.role === 'admin' ? 'all' : user.id;
                 [
