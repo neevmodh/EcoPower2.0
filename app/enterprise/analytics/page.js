@@ -91,7 +91,7 @@ export default function EnterpriseAnalytics() {
           { label: 'Total Generation', value: (totalGen/1000).toFixed(1) + ' MWh', icon: Zap, color: '#f59e0b', trend: '+14%' },
           { label: 'Total Consumption', value: (totalCons/1000).toFixed(1) + ' MWh', icon: BarChart3, color: '#8b5cf6', trend: '-5%' },
           { label: 'Fleet Efficiency', value: avgEff.toFixed(1) + '%', icon: TrendingUp, color: '#22C55E', trend: '+3%' },
-          { label: 'Potential Savings', value: '\u20b9' + (totalSavings/1000).toFixed(0) + 'K/mo', icon: Brain, color: '#3b82f6', trend: 'AI' },
+          { label: 'Potential Savings', value: '₹' + (totalSavings/1000).toFixed(0) + 'K/mo', icon: Brain, color: '#3b82f6', trend: 'AI' },
         ].map((s, i) => (
           <div key={i} className="glass-card" style={{ padding: '1.5rem' }}>
             <div style={{ width: 44, height: 44, borderRadius: 12, background: s.color + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
@@ -138,7 +138,7 @@ export default function EnterpriseAnalytics() {
           </div>
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>POTENTIAL SAVINGS</div>
-            <div style={{ fontSize: '2.25rem', fontWeight: 900 }}>\u20b9{(totalSavings/1000).toFixed(0)}K/mo</div>
+            <div style={{ fontSize: '2.25rem', fontWeight: 900 }}>₹{(totalSavings/1000).toFixed(0)}K/mo</div>
           </div>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
@@ -150,7 +150,7 @@ export default function EnterpriseAnalytics() {
               </div>
               <p style={{ fontSize: '0.85rem', opacity: 0.85, marginBottom: '0.875rem' }}>{opt.desc}</p>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '1.1rem', fontWeight: 800 }}>\u20b9{opt.savings.toLocaleString()}/mo</span>
+                <span style={{ fontSize: '1.1rem', fontWeight: 800 }}>₹{opt.savings.toLocaleString()}/mo</span>
                 <button style={{ padding: '0.4rem 1rem', background: 'white', color: '#4f46e5', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}
                   onClick={() => { setImplemented(p => ({ ...p, [i]: true })); showToast(`"${opt.title}" queued for implementation`); }}>
                   {implemented[i] ? '✓ Queued' : 'Implement'}
