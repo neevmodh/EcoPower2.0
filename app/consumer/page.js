@@ -46,7 +46,7 @@ export default function ConsumerDashboard() {
   if (loading) return <div style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>Loading dashboard...</div>;
 
   const latest = telemetry.length > 0 ? telemetry[telemetry.length - 1] : {};
-  const currentSoc = latest.batteryStateOfCharge ?? 72;
+  const currentSoc = Math.round(latest.batteryStateOfCharge ?? 72);
   const currentSolar = latest.solarGeneration ?? 0;
   const currentConsumption = latest.consumption ?? 0;
   const totalGen = telemetry.reduce((s, t) => s + (t.solarGeneration || 0), 0);
