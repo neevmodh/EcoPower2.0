@@ -20,6 +20,8 @@
     "express": "^5.2.1",
     "framer-motion": "^12.35.2",
     "jsonwebtoken": "^9.0.3",
+    "jspdf": "^4.2.0",
+    "jspdf-autotable": "^5.0.7",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.577.0",
     "mongoose": "^9.3.0",

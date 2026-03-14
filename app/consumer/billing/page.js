@@ -4,7 +4,8 @@ import { useAuth } from '@/context/AuthContext';
 import AIAdvisor from '@/components/AIAdvisor';
 import Modal from '@/components/Modal';
 import PaymentFlow from '@/components/PaymentFlow';
-import { FileText, CheckCircle, AlertCircle, Clock, Download, TrendingUp, BarChart2, IndianRupee } from 'lucide-react';
+import { downloadInvoicePDF, downloadAllInvoicesPDF } from '@/components/InvoicePDF';
+import { FileText, CheckCircle, AlertCircle, Clock, Download, TrendingUp, BarChart2 } from 'lucide-react';
 
 export default function ConsumerBilling() {
   const { user } = useAuth();
@@ -29,24 +30,7 @@ export default function ConsumerBilling() {
 
   useEffect(() => { fetchInvoices(user); }, [user]);
 
-  const downloadInvoice = (inv) => {
-    const lines = [
-      'ECOPOWER ENERGY SERVICES',
-      '========================',
-      `Invoice ID   : ${inv.invoiceId}`,
-      `Period       : ${inv.billingPeriod}`,
-      `Energy Used  : ${inv.energyUsedKwh} kWh`,
-      `Base Amount  : ₹${inv.baseAmount}`,
-      `GST (18%)    : ₹${inv.tax?.toFixed(2)}`,
-      `Total        : ₹${inv.totalAmount}`,
-      `Due Date     : ${new Date(inv.dueDate).toLocaleDateString()}`,
-      `Status       : ${inv.status}`,
-    ];
-    const a = document.createElement('a');
-    a.href = 'data:text/plain,' + encodeURIComponent(lines.join('\n'));
-    a.download = `ecopower-invoice-${inv.invoiceId?.slice(-8)}.txt`;
-    a.click();
-  };
+  const downloadInvoice = (inv) => downloadInvoicePDF(inv);
 
   if (loading) return <div style={{ padding: '2rem', color: '#64748b' }}>Loading Billing...</div>;
 
@@ -74,7 +58,7 @@ export default function ConsumerBilling() {
           <h1 style={{ fontSize: '2rem', fontWeight: 900, margin: 0, letterSpacing: '-0.03em' }}>Billing & Payments</h1>
           <p style={{ color: '#64748b', margin: '0.4rem 0 0 0' }}>Manage invoices, track payments, download receipts</p>
         </div>
-        <button onClick={() => downloadInvoice({ invoiceId: 'SUMMARY', billingPeriod: 'All Time', energyUsedKwh: invoices.reduce((s,i)=>s+(i.energyUsedKwh||0),0).toFixed(1), baseAmount: totalPaid.toFixed(0), tax: 0, totalAmount: totalPaid, dueDate: new Date(), status: 'Summary' })}
+        <button onClick={() => downloadAllInvoicesPDF(invoices, user?.name || user?.email || 'Consumer Account')}
           style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0.65rem 1.25rem', background: '#1e293b', color: 'white', border: 'none', borderRadius: 10, fontWeight: 700, cursor: 'pointer', fontSize: '0.875rem' }}>
           <Download size={15} /> Export All
         </button>

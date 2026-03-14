@@ -246,7 +246,7 @@ export default function PaymentFlow({ invoiceId, amount, onSuccess, onClose }) {
           </div>
           <div style={{ fontWeight: 900, fontSize: '1.5rem', color: '#16a34a', marginBottom: 8 }}>Payment Successful!</div>
           <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '1.5rem' }}>Your payment of ₹{amount?.toLocaleString()} has been processed.</p>
-          <div style={{ padding: '1.25rem', background: '#f0fdf4', borderRadius: 12, border: '1px solid #bbf7d0', textAlign: 'left' }}>
+          <div style={{ padding: '1.25rem', background: '#f0fdf4', borderRadius: 12, border: '1px solid #bbf7d0', textAlign: 'left', marginBottom: '1.25rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
               <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Transaction ID</span>
               <span style={{ fontFamily: 'monospace', fontWeight: 700, color: '#16a34a', fontSize: '0.85rem' }}>{txnId}</span>
@@ -260,6 +260,12 @@ export default function PaymentFlow({ invoiceId, amount, onSuccess, onClose }) {
               <span style={{ fontWeight: 700, color: '#16a34a', fontSize: '0.85rem' }}>PAID</span>
             </div>
           </div>
+          <button onClick={async () => {
+            const { downloadInvoicePDF } = await import('@/components/InvoicePDF');
+            downloadInvoicePDF({ invoiceId, billingPeriod: new Date().toLocaleString('default', { month: 'short', year: 'numeric' }), energyUsedKwh: 0, baseAmount: Math.round(amount / 1.18), tax: amount - Math.round(amount / 1.18), discount: 0, totalAmount: amount, dueDate: new Date(), status: 'Paid' });
+          }} style={{ width: '100%', padding: '0.875rem', background: '#f0fdf4', border: '1.5px solid #bbf7d0', borderRadius: 12, fontWeight: 700, cursor: 'pointer', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontSize: '0.9rem' }}>
+            <Loader size={16} /> Download Receipt PDF
+          </button>
         </div>
       )}
 

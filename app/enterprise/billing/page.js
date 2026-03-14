@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import Modal from '@/components/Modal';
 import PaymentFlow from '@/components/PaymentFlow';
 import AIAdvisor from '@/components/AIAdvisor';
+import { downloadInvoicePDF, downloadAllInvoicesPDF } from '@/components/InvoicePDF';
 import { FileText, CreditCard, TrendingDown, CheckCircle, Clock, AlertCircle, Download, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function EnterpriseBilling() {
@@ -123,7 +124,8 @@ export default function EnterpriseBilling() {
       <div className="glass-card" style={{ padding: '1.75rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <h3 style={{ fontWeight: 700, margin: 0 }}>All Invoices ({invoices.length})</h3>
-          <button style={{ padding: '0.5rem 1rem', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: 8, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.8rem' }}>
+          <button onClick={() => downloadAllInvoicesPDF(invoices, user?.name || user?.email || 'Enterprise Account')}
+            style={{ padding: '0.5rem 1rem', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: 8, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.8rem' }}>
             <Download size={14} /> Export All
           </button>
         </div>
@@ -157,6 +159,10 @@ export default function EnterpriseBilling() {
                         Pay
                       </button>
                     )}
+                    <button onClick={e => { e.stopPropagation(); downloadInvoicePDF(inv); }}
+                      style={{ width: 32, height: 32, borderRadius: 7, background: '#f1f5f9', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>
+                      <Download size={14} />
+                    </button>
                     {expanded === inv.invoiceId ? <ChevronUp size={16} color="#94a3b8" /> : <ChevronDown size={16} color="#94a3b8" />}
                   </div>
                 </div>
