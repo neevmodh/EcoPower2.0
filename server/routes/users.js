@@ -13,7 +13,6 @@ const formatUser = (u) => {
     name: obj.name,
     email: obj.email,
     phone: obj.phone || '',
-    companyName: obj.companyName || '',
     role: obj.role.charAt(0).toUpperCase() + obj.role.slice(1),
     status: obj.status.charAt(0).toUpperCase() + obj.status.slice(1),
     created_at: obj.created_at,
@@ -112,7 +111,6 @@ router.put('/:id', async (req, res) => {
     const updates = {};
     if (req.body.name) updates.name = req.body.name;
     if (req.body.phone !== undefined) updates.phone = req.body.phone;
-    if (req.body.companyName !== undefined) updates.companyName = req.body.companyName;
     if (req.body.role) updates.role = req.body.role.toLowerCase();
     if (req.body.status) updates.status = req.body.status.toLowerCase();
     const user = await User.findByIdAndUpdate(req.params.id, updates, { new: true });

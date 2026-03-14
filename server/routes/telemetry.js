@@ -71,8 +71,6 @@ router.get('/dashboard', async (req, res) => {
   }
 });
 
-export default router;
-
 // @route   GET /api/telemetry/latest
 // @desc    Get latest telemetry reading for a location
 router.get('/latest', async (req, res) => {
@@ -219,3 +217,5 @@ router.post('/ingest', async (req, res) => {
     res.status(500).json({ error: 'Server error', details: err.message });
   }
 });
+
+export default router;

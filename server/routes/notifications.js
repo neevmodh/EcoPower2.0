@@ -1,28 +1,17 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import { Notification } from '../models/Notification.js';
 
 const router = express.Router();
 
-const notificationSchema = new mongoose.Schema({
-  userId: String,
-  role: { type: String, default: 'consumer' }, // consumer, admin, enterprise
-  title: String,
-  message: String,
-  type: { type: String, enum: ['alert', 'success', 'info', 'energy'], default: 'info' },
-  read: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now },
-});
-
-const Notification = mongoose.models.Notification || mongoose.model('Notification', notificationSchema);
-
 // Seed default notifications if none exist for a user
 async function seedIfEmpty(userId, role) {
-  const count = await Notification.countDocuments({ userId });
+  const count = await Notification.countDocuments({ user_id: userId });
   if (count > 0) return;
 
   const defaults = {
     consumer: [
-      { title: 'Solar Generation Peak', message: 'Your solar panels generated 8.4 kWh today — a new daily record!', type: 'energy' },
+      { title: 'Solar Generation Peak', message: 'Your solar panels generated 8.4 kWh today — a new daily record!', type: 'info' },
       { title: 'Invoice Due Soon', message: 'Your March invoice of ₹2,499 is due in 5 days.', type: 'alert' },
       { title: 'Battery Fully Charged', message: 'Your home battery reached 100% charge at 2:30 PM.', type: 'success' },
       { title: 'Grid Export Earnings', message: 'You earned ₹124 from grid export this week.', type: 'success' },
@@ -46,9 +35,13 @@ async function seedIfEmpty(userId, role) {
 
   const msgs = defaults[role] || defaults.consumer;
   const docs = msgs.map((n, i) => ({
-    ...n, userId, role,
+    user_id: userId,
+    title: n.title,
+    message: n.message,
+    type: n.type,
     read: i > 2,
-    createdAt: new Date(Date.now() - i * 3600000 * 4),
+    is_read: i > 2,
+    created_at: new Date(Date.now() - i * 3600000 * 4),
   }));
   await Notification.insertMany(docs);
 }
@@ -58,8 +51,9 @@ router.get('/', async (req, res) => {
   try {
     const { userId, role = 'consumer' } = req.query;
     if (!userId) return res.json([]);
+    if (!mongoose.Types.ObjectId.isValid(userId)) return res.json([]);
     await seedIfEmpty(userId, role);
-    const notifs = await Notification.find({ userId }).sort({ createdAt: -1 }).limit(50);
+    const notifs = await Notification.find({ user_id: userId }).sort({ created_at: -1 }).limit(50);
     res.json(notifs);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -69,7 +63,7 @@ router.get('/', async (req, res) => {
 // PUT /api/notifications/:id/read
 router.put('/:id/read', async (req, res) => {
   try {
-    await Notification.findByIdAndUpdate(req.params.id, { read: true });
+    await Notification.findByIdAndUpdate(req.params.id, { read: true, is_read: true });
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -80,7 +74,8 @@ router.put('/:id/read', async (req, res) => {
 router.put('/mark-all-read', async (req, res) => {
   try {
     const { userId } = req.query;
-    await Notification.updateMany({ userId }, { read: true });
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) return res.status(400).json({ error: 'Valid userId required' });
+    await Notification.updateMany({ user_id: userId }, { read: true, is_read: true });
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });

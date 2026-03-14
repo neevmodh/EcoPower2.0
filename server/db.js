@@ -21,7 +21,7 @@ export const connectDB = async () => {
   }
 
   try {
-    const conn = await mongoose.connect(uri, { dbName: 'eaas_platform' });
+    const conn = await mongoose.connect(uri);
     isConnected = true;
     console.log(`✅ MongoDB connected: ${conn.connection.host}`);
   } catch (error) {

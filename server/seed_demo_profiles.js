@@ -27,28 +27,38 @@ async function seedDemo() {
     
     // 1. Ensure Users Exist (using same hash for demo: admin@123)
     const salt = await bcrypt.genSalt(10);
-    const passHash = await bcrypt.hash('admin@123', salt);
+    const passHash = await bcrypt.hash('password123', salt);
 
     console.log('👤 Synchronizing Demo Users...');
-    let admin = await User.findOne({ email: 'admin@instinct.com' });
-    if (!admin) admin = await User.create({ name: 'System Admin', email: 'admin@instinct.com', password_hash: passHash, role: 'admin', status: 'active' });
+    let admin = await User.findOneAndUpdate(
+      { email: 'admin@ecopower.com' },
+      { name: 'EcoPower Admin', email: 'admin@ecopower.com', password_hash: passHash, role: 'admin', status: 'active' },
+      { upsert: true, new: true }
+    );
 
-    let enterprise = await User.findOne({ email: 'vikram@abc.com' });
-    if (!enterprise) {
-        let org = await Organization.findOne({ organization_name: 'Eco Industrial Corp' });
-        if (!org) org = await Organization.create({ organization_name: 'Eco Industrial Corp', industry: 'Manufacturing', contact_email: 'vikram@abc.com' });
-        enterprise = await User.create({ name: 'Vikram Singh', email: 'vikram@abc.com', password_hash: passHash, role: 'enterprise', organization_id: org._id, status: 'active' });
-    }
+    let org = await Organization.findOne({ organization_name: 'TechCorp Industries' });
+    if (!org) org = await Organization.create({ organization_name: 'TechCorp Industries', industry: 'Manufacturing', contact_email: 'vikram@techcorp.in' });
 
-    let consumer = await User.findOne({ email: 'rahul.sharma@gmail.com' });
-    if (!consumer) consumer = await User.create({ name: 'Rahul Sharma', email: 'rahul.sharma@gmail.com', password_hash: passHash, role: 'consumer', phone: '+91 9988776655', status: 'active' });
+    let enterprise = await User.findOneAndUpdate(
+      { email: 'vikram@techcorp.in' },
+      { name: 'Vikram Singh', email: 'vikram@techcorp.in', password_hash: passHash, role: 'enterprise', organization_id: org._id, status: 'active' },
+      { upsert: true, new: true }
+    );
+
+    let consumer = await User.findOneAndUpdate(
+      { email: 'rahul.sharma@gmail.com' },
+      { name: 'Rahul Sharma', email: 'rahul.sharma@gmail.com', password_hash: passHash, role: 'consumer', phone: '+91 9988776655', status: 'active' },
+      { upsert: true, new: true }
+    );
 
     const demoUsers = [admin, enterprise, consumer];
 
     // 2. Setup Plans
-    const plans = await EnergyPlan.find();
-    const planBasic = plans.find(p => p.plan_name === 'Solar Basic');
-    const planEnt = plans.find(p => p.plan_name === 'Enterprise Grade');
+    let planBasic = await EnergyPlan.findOne({ plan_name: 'Solar Basic' });
+    if (!planBasic) planBasic = await EnergyPlan.create({ plan_name: 'Solar Basic', description: 'Residential solar plan', price_per_month: 1499, max_kwh: 400, solar_capacity_kw: 5, battery_included: false });
+
+    let planEnt = await EnergyPlan.findOne({ plan_name: 'Enterprise Grade' });
+    if (!planEnt) planEnt = await EnergyPlan.create({ plan_name: 'Enterprise Grade', description: 'Industrial multi-site plan', price_per_month: 25000, max_kwh: 20000, solar_capacity_kw: 200, battery_included: true });
 
     // 3. Clear existing related data for these users to start fresh & clean
     const userIds = demoUsers.map(u => u._id);
@@ -66,7 +76,7 @@ async function seedDemo() {
     console.log('📍 Re-planting Locations & IoT Assets...');
     
     // Consumer Location
-    const rahulLoc = await Location.create({ user_id: consumer._id, address: 'B-402, Green Valley Apartments, Satellite', city: 'Ahmedabad', state: 'Gujarat', pincode: '380015' });
+    const rahulLoc = await Location.create({ user_id: consumer._id, address_line1: 'B-402, Green Valley Apartments, Satellite', city: 'Ahmedabad', state: 'Gujarat', pincode: '380015' });
     await Subscription.create({ user_id: consumer._id, plan_id: planBasic._id, location_id: rahulLoc._id, status: 'active', start_date: new Date('2025-01-01') });
     const rahulMeter = await Device.create({ device_serial: 'SMT-CON-RAHUL-01', location_id: rahulLoc._id, device_type: 'smart_meter', status: 'online' });
     const rahulInv = await Device.create({ device_serial: 'INV-CON-RAHUL-01', location_id: rahulLoc._id, device_type: 'solar_inverter', status: 'online' });
@@ -79,7 +89,7 @@ async function seedDemo() {
     ];
     const entDevices = [];
     for (const s of sites) {
-        const loc = await Location.create({ user_id: enterprise._id, organization_id: enterprise.organization_id, name: s.name, address: s.area, city: s.city, state: 'Gujarat' });
+        const loc = await Location.create({ user_id: enterprise._id, organization_id: enterprise.organization_id, name: s.name, address_line1: s.area, city: s.city, state: 'Gujarat' });
         await Subscription.create({ user_id: enterprise._id, plan_id: planEnt._id, location_id: loc._id, status: 'active', start_date: new Date('2025-01-01') });
         const dev = await Device.create({ device_serial: `MAX-ENT-${s.city.toUpperCase()}-01`, location_id: loc._id, device_type: 'smart_meter', status: 'online' });
         entDevices.push(dev);
@@ -140,15 +150,15 @@ async function seedDemo() {
         for (let i = 0; i < 12; i++) {
             const date = new Date(2025, i, 1);
             if (date > new Date()) continue;
-            const amount = 1499 + (Math.random()*200);
-            const tax = amount * 0.18;
+            const base_amount = 1499 + (Math.random()*200);
+            const tax = base_amount * 0.18;
             await Invoice.create({
                 subscription_id: sub._id,
                 billing_period: `${months[i]} 2025`,
                 energy_used_kwh: 350 + Math.random()*50,
-                amount: amount,
+                base_amount,
                 tax: tax,
-                total_amount: amount + tax,
+                total_amount: base_amount + tax,
                 status: (i === today.getMonth() && today.getDate() < 10) ? 'pending' : 'paid',
                 created_at: date
             });
@@ -161,15 +171,15 @@ async function seedDemo() {
         for (let i = 0; i < 12; i++) {
             const date = new Date(2025, i, 1);
             if (date > new Date()) continue;
-            const amount = 25000 + (Math.random()*5000);
-            const tax = amount * 0.18;
+            const base_amount = 25000 + (Math.random()*5000);
+            const tax = base_amount * 0.18;
             await Invoice.create({
                 subscription_id: sub._id,
                 billing_period: `${months[i]} 2025`,
                 energy_used_kwh: 15000 + Math.random()*2000,
-                amount: amount,
+                base_amount,
                 tax: tax,
-                total_amount: amount + tax,
+                total_amount: base_amount + tax,
                 status: (i === today.getMonth() && today.getDate() < 10) ? 'pending' : 'paid',
                 created_at: date
             });
@@ -196,14 +206,15 @@ async function seedDemo() {
     const rahulLocs = await Location.find({ user_id: consumer._id });
 
     const tickets = [
-        { u: consumer, l: rahulLocs[0], type: 'technical_fault', desc: 'Meter Display Flickering: The LCD on the SMT unit started flickering after the rains.', status: 'resolved' },
-        { u: consumer, l: rahulLocs[0], type: 'technical_fault', desc: 'Battery Drain Alert: SoC drops 10% between 2am and 4am without load.', status: 'in_progress' },
-        { u: enterprise, l: entLocs[0], type: 'billing_query', desc: 'API Access: Need developer credentials for industrial JSON feed portal.', status: 'open' }
+        { u: consumer, l: rahulLocs[0], type: 'technical_fault', subject: 'Meter Display Flickering', desc: 'Meter Display Flickering: The LCD on the SMT unit started flickering after the rains.', status: 'resolved' },
+        { u: consumer, l: rahulLocs[0], type: 'technical_fault', subject: 'Battery Drain Alert', desc: 'Battery Drain Alert: SoC drops 10% between 2am and 4am without load.', status: 'in_progress' },
+        { u: enterprise, l: entLocs[0], type: 'billing_query', subject: 'API Access Request', desc: 'API Access: Need developer credentials for industrial JSON feed portal.', status: 'open' }
     ];
     for (const t of tickets) {
         await SupportTicket.create({ 
             user_id: t.u._id, 
             location_id: t.l._id, 
+            subject: t.subject,
             issue_type: t.type, 
             description: t.desc, 
             status: t.status 
@@ -223,9 +234,9 @@ async function seedDemo() {
 
     console.log('\n🌟 DEMO ACCOUNT SYNC COMPLETE 🌟');
     console.log('Accounts Ready:');
-    console.log('- Admin: admin@instinct.com | admin@123');
-    console.log('- Enterprise: vikram@abc.com | admin@123');
-    console.log('- Consumer: rahul.sharma@gmail.com | admin@123');
+    console.log('- Admin: admin@ecopower.com | password123');
+    console.log('- Enterprise: vikram@techcorp.in | password123');
+    console.log('- Consumer: rahul.sharma@gmail.com | password123');
     
     process.exit(0);
   } catch (err) {
