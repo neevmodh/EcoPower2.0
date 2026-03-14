@@ -151,7 +151,7 @@ const TITLES = {
   enterprise: 'Enterprise AI Advisor',
 };
 
-const GROQ_KEY = 'process.env.NEXT_PUBLIC_GROQ_API_KEY || ''';
+const GROQ_KEY = process.env.NEXT_PUBLIC_GROQ_API_KEY || '';
 
 async function callAI(messages, mode, context) {
   const systemContent = (SYSTEM_PROMPTS[mode] || SYSTEM_PROMPTS.admin) + (context ? `\n\nPAGE CONTEXT:\n${context}` : '');
