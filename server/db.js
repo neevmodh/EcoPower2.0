@@ -1,29 +1,31 @@
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// In local dev, load from .env.local via Next.js or dotenv.
+// In Vercel production, env vars are injected automatically.
+if (process.env.NODE_ENV !== 'production') {
+  const { default: dotenv } = await import('dotenv');
+  const { fileURLToPath } = await import('url');
+  const { default: path } = await import('path');
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  dotenv.config({ path: path.resolve(__dirname, '../.env.local') });
+}
 
-// Load environment variables from .env.local
-dotenv.config({ path: path.resolve(__dirname, '../.env.local') });
+let isConnected = false;
 
 export const connectDB = async () => {
-    try {
-        const uri = process.env.MONGODB_URI;
-        if (!uri) {
-            console.error('ERROR: MONGODB_URI is not defined in .env.local');
-            process.exit(1);
-        }
+  if (isConnected) return;
 
-        const conn = await mongoose.connect(uri, {
-            dbName: 'eco' // Explicitly use the 'eco' database as requested
-        });
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
+    throw new Error('MONGODB_URI environment variable is not set');
+  }
 
-        console.log(`MongoDB Connected: ${conn.connection.host}`);
-    } catch (error) {
-        console.error(`Error: ${error.message}`);
-        process.exit(1);
-    }
+  try {
+    const conn = await mongoose.connect(uri, { dbName: 'eaas_platform' });
+    isConnected = true;
+    console.log(`✅ MongoDB connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error('MongoDB connection error:', error.message);
+    throw error;
+  }
 };
