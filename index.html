@@ -1,17 +1,4026 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="EcoPower — Energy-as-a-Service Platform. Monitor solar generation, manage devices, and optimize energy consumption." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <title>EcoPower — Energy as a Service</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoPower | Energy-as-a-Service Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <style>
+        /* ===== BASE STYLES ===== */
+        :root {
+            --primary-green: #10b981;
+            --dark-green: #059669;
+            --light-green: #d1fae5;
+            --accent-green: #34d399;
+            --white: #ffffff;
+            --light-gray: #f8fafc;
+            --medium-gray: #e2e8f0;
+            --dark-gray: #64748b;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --warning: #ef4444;
+            --success: #10b981;
+            --info: #3b82f6;
+            --purple: #8b5cf6;
+            --orange: #f59e0b;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --border-radius-sm: 0.375rem;
+            --border-radius: 0.5rem;
+            --border-radius-lg: 0.75rem;
+            --border-radius-xl: 1rem;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--text-dark);
+            line-height: 1.6;
+            font-size: 0.95rem;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* ===== UTILITY CLASSES ===== */
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .text-left { text-align: left; }
+        .text-green { color: var(--primary-green); }
+        .text-white { color: var(--white); }
+        .text-dark { color: var(--text-dark); }
+        .text-light { color: var(--text-light); }
+        .bg-white { background-color: var(--white); }
+        .bg-green { background-color: var(--primary-green); }
+        .bg-light-green { background-color: var(--light-green); }
+        .bg-light-gray { background-color: var(--light-gray); }
+        .rounded { border-radius: var(--border-radius); }
+        .rounded-lg { border-radius: var(--border-radius-lg); }
+        .shadow { box-shadow: var(--shadow); }
+        .shadow-lg { box-shadow: var(--shadow-lg); }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+        .mb-4 { margin-bottom: 2rem; }
+        .mb-5 { margin-bottom: 3rem; }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mt-4 { margin-top: 2rem; }
+        .mt-5 { margin-top: 3rem; }
+        .p-3 { padding: 1.5rem; }
+        .p-4 { padding: 2rem; }
+        .p-5 { padding: 3rem; }
+        .d-flex { display: flex; }
+        .d-block { display: block; }
+        .d-none { display: none; }
+        .align-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .flex-column { flex-direction: column; }
+        .flex-wrap { flex-wrap: wrap; }
+        .gap-1 { gap: 0.5rem; }
+        .gap-2 { gap: 1rem; }
+        .gap-3 { gap: 1.5rem; }
+        .gap-4 { gap: 2rem; }
+        .w-100 { width: 100%; }
+        .w-50 { width: 50%; }
+        .h-100 { height: 100%; }
+        .position-relative { position: relative; }
+        .position-absolute { position: absolute; }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+            outline: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-green);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--dark-green);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--dark-green);
+            border: 2px solid var(--dark-green);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--light-green);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text-dark);
+            border: 1px solid var(--medium-gray);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--light-gray);
+            border-color: var(--dark-green);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-lg {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        .btn-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            padding: 0;
+            border-radius: 50%;
+        }
+
+        /* ===== HEADER & NAVIGATION ===== */
+        header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--dark-green);
+        }
+
+        .logo-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.25rem;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .logo-subtitle {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            margin-left: 3rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-dark);
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-green);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-green);
+            border-radius: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .notification-btn:hover {
+            background-color: var(--light-gray);
+            color: var(--primary-green);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0.75rem;
+            height: 0.75rem;
+            background-color: var(--warning);
+            border-radius: 50%;
+            border: 2px solid var(--white);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--light-green);
+            border-radius: var(--border-radius-lg);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-profile:hover {
+            background-color: #bbf7d0;
+        }
+
+        .user-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .user-plan {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero-section {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-green) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(52, 211, 153, 0.05) 100%);
+            clip-path: polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%);
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-text h1 span {
+            color: var(--primary-green);
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero-text h1 span::after {
+            content: '';
+            position: absolute;
+            bottom: 0.25rem;
+            left: 0;
+            width: 100%;
+            height: 0.5rem;
+            background-color: rgba(16, 185, 129, 0.2);
+            z-index: -1;
+            border-radius: 0.25rem;
+        }
+
+        .hero-text p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            max-width: 90%;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .hero-stat {
+            text-align: center;
+            padding: 1rem;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .hero-stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            line-height: 1;
+        }
+
+        .hero-stat-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        .hero-visual {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .energy-orb {
+            width: 25rem;
+            height: 25rem;
+            position: relative;
+        }
+
+        .orb-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 15rem;
+            height: 15rem;
+            background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+            border-radius: 50%;
+            box-shadow: 
+                0 0 5rem rgba(16, 185, 129, 0.3),
+                inset 0 0 2rem rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.5rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .energy-particle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 1rem;
+            height: 1rem;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            animation: orbit 8s linear infinite;
+        }
+
+        .energy-particle:nth-child(2) {
+            width: 0.75rem;
+            height: 0.75rem;
+            background-color: var(--primary-green);
+            animation-delay: -2s;
+            animation-duration: 10s;
+        }
+
+        .energy-particle:nth-child(3) {
+            width: 0.5rem;
+            height: 0.5rem;
+            background-color: #8b5cf6;
+            animation-delay: -4s;
+            animation-duration: 12s;
+        }
+
+        .energy-particle:nth-child(4) {
+            width: 0.75rem;
+            height: 0.75rem;
+            background-color: #3b82f6;
+            animation-delay: -6s;
+            animation-duration: 9s;
+        }
+
+        @keyframes orbit {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg) translateX(12rem) rotate(0deg);
+            }
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg) translateX(12rem) rotate(-360deg);
+            }
+        }
+
+        /* ===== DASHBOARD ===== */
+        .dashboard-section {
+            padding: 3rem 0;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .section-subtitle {
+            color: var(--text-light);
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+        }
+
+        /* Dashboard Cards */
+        .stat-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border-left: 4px solid var(--primary-green);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: var(--border-radius);
+            background-color: var(--light-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-green);
+            font-size: 1.25rem;
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--border-radius-sm);
+        }
+
+        .trend-up {
+            color: var(--success);
+            background-color: rgba(16, 185, 129, 0.1);
+        }
+
+        .trend-down {
+            color: var(--warning);
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .stat-progress {
+            margin-top: 1rem;
+        }
+
+        .progress-bar {
+            height: 0.5rem;
+            background-color: var(--medium-gray);
+            border-radius: 0.25rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-green);
+            border-radius: 0.25rem;
+            transition: width 1s ease;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        /* Dashboard Grid Layout */
+        .col-1 { grid-column: span 1; }
+        .col-2 { grid-column: span 2; }
+        .col-3 { grid-column: span 3; }
+        .col-4 { grid-column: span 4; }
+        .col-5 { grid-column: span 5; }
+        .col-6 { grid-column: span 6; }
+        .col-7 { grid-column: span 7; }
+        .col-8 { grid-column: span 8; }
+        .col-9 { grid-column: span 9; }
+        .col-10 { grid-column: span 10; }
+        .col-11 { grid-column: span 11; }
+        .col-12 { grid-column: span 12; }
+
+        @media (max-width: 1200px) {
+            .col-lg-1 { grid-column: span 1; }
+            .col-lg-2 { grid-column: span 2; }
+            .col-lg-3 { grid-column: span 3; }
+            .col-lg-4 { grid-column: span 4; }
+            .col-lg-5 { grid-column: span 5; }
+            .col-lg-6 { grid-column: span 6; }
+            .col-lg-7 { grid-column: span 7; }
+            .col-lg-8 { grid-column: span 8; }
+            .col-lg-9 { grid-column: span 9; }
+            .col-lg-10 { grid-column: span 10; }
+            .col-lg-11 { grid-column: span 11; }
+            .col-lg-12 { grid-column: span 12; }
+        }
+
+        @media (max-width: 992px) {
+            .col-md-1 { grid-column: span 1; }
+            .col-md-2 { grid-column: span 2; }
+            .col-md-3 { grid-column: span 3; }
+            .col-md-4 { grid-column: span 4; }
+            .col-md-5 { grid-column: span 5; }
+            .col-md-6 { grid-column: span 6; }
+            .col-md-7 { grid-column: span 7; }
+            .col-md-8 { grid-column: span 8; }
+            .col-md-9 { grid-column: span 9; }
+            .col-md-10 { grid-column: span 10; }
+            .col-md-11 { grid-column: span 11; }
+            .col-md-12 { grid-column: span 12; }
+        }
+
+        @media (max-width: 768px) {
+            .col-sm-1 { grid-column: span 1; }
+            .col-sm-2 { grid-column: span 2; }
+            .col-sm-3 { grid-column: span 3; }
+            .col-sm-4 { grid-column: span 4; }
+            .col-sm-5 { grid-column: span 5; }
+            .col-sm-6 { grid-column: span 6; }
+            .col-sm-7 { grid-column: span 7; }
+            .col-sm-8 { grid-column: span 8; }
+            .col-sm-9 { grid-column: span 9; }
+            .col-sm-10 { grid-column: span 10; }
+            .col-sm-11 { grid-column: span 11; }
+            .col-sm-12 { grid-column: span 12; }
+        }
+
+        /* Chart Cards */
+        .chart-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            height: 100%;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        /* IoT Devices */
+        .devices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .device-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--medium-gray);
+        }
+
+        .device-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-green);
+        }
+
+        .device-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .device-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: var(--border-radius);
+            background-color: var(--light-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-green);
+            font-size: 1.25rem;
+        }
+
+        .device-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-online {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .status-offline {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--warning);
+        }
+
+        .device-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .device-location {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .device-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .device-stat {
+            text-align: center;
+        }
+
+        .device-stat-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-green);
+        }
+
+        .device-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        /* ===== SUBSCRIPTION PLANS ===== */
+        .plans-section {
+            padding: 4rem 0;
+            background-color: var(--light-gray);
+        }
+
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .plan-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 2.5rem 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .plan-card.popular {
+            border: 2px solid var(--primary-green);
+            transform: scale(1.05);
+        }
+
+        .plan-card.popular:hover {
+            transform: scale(1.05) translateY(-8px);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: 1rem;
+            right: -2.5rem;
+            background-color: var(--primary-green);
+            color: var(--white);
+            padding: 0.5rem 3rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transform: rotate(45deg);
+        }
+
+        .plan-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+
+        .plan-name {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-description {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .plan-price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            line-height: 1;
+            margin: 1rem 0;
+        }
+
+        .plan-price span {
+            font-size: 1rem;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        .plan-features {
+            margin-bottom: 2rem;
+        }
+
+        .plan-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+
+        .plan-feature:last-child {
+            border-bottom: none;
+        }
+
+        .feature-icon {
+            color: var(--primary-green);
+            font-size: 1.1rem;
+        }
+
+        .feature-text {
+            flex: 1;
+        }
+
+        .feature-included {
+            color: var(--text-dark);
+        }
+
+        .feature-excluded {
+            color: var(--text-light);
+            text-decoration: line-through;
+        }
+
+        /* ===== BILLING & PAYMENTS ===== */
+        .billing-section {
+            padding: 4rem 0;
+        }
+
+        .billing-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .invoice-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--medium-gray);
+        }
+
+        .invoice-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .invoice-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .invoice-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .invoice-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .detail-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .detail-value {
+            font-weight: 500;
+        }
+
+        .invoice-items {
+            margin: 2rem 0;
+        }
+
+        .invoice-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+
+        .item-label {
+            color: var(--text-dark);
+        }
+
+        .item-value {
+            font-weight: 500;
+        }
+
+        .invoice-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 1.5rem 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border-top: 2px solid var(--medium-gray);
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .payment-method {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1.5rem 1rem;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .payment-method:hover {
+            border-color: var(--primary-green);
+            background-color: var(--light-green);
+        }
+
+        .payment-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: var(--light-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-green);
+            font-size: 1.5rem;
+        }
+
+        .payment-name {
+            font-weight: 500;
+        }
+
+        /* ===== SUPPORT & SERVICE ===== */
+        .support-section {
+            padding: 4rem 0;
+            background-color: var(--light-gray);
+        }
+
+        .support-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .tickets-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .ticket-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .ticket-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .ticket-id {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .ticket-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .ticket-priority {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+
+        .priority-high {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--warning);
+        }
+
+        .priority-medium {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--orange);
+        }
+
+        .priority-low {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .ticket-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .ticket-description {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .ticket-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .ticket-date {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quick-actions {
+            background-color: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            height: fit-content;
+        }
+
+        .quick-action {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .quick-action:hover {
+            border-color: var(--primary-green);
+            background-color: var(--light-green);
+        }
+
+        .action-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: var(--border-radius);
+            background-color: var(--light-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-green);
+            font-size: 1.1rem;
+        }
+
+        .action-text {
+            flex: 1;
+        }
+
+        .action-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .action-description {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        /* ===== DISCOM INTEGRATION ===== */
+        .discom-section {
+            padding: 4rem 0;
+        }
+
+        .discom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .discom-visual {
+            position: relative;
+        }
+
+        .grid-visual {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+        }
+
+        .grid-node {
+            position: absolute;
+            width: 1.5rem;
+            height: 1.5rem;
+            background-color: var(--primary-green);
+            border-radius: 50%;
+            box-shadow: 0 0 1rem rgba(16, 185, 129, 0.5);
+        }
+
+        .grid-connection {
+            position: absolute;
+            height: 2px;
+            background-color: rgba(16, 185, 129, 0.3);
+            transform-origin: left center;
+        }
+
+        .discom-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .discom-stat {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .discom-stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .discom-stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* ===== CARBON IMPACT ===== */
+        .carbon-section {
+            padding: 4rem 0;
+            background-color: var(--light-gray);
+        }
+
+        .carbon-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .carbon-visual {
+            position: relative;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tree-visual {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .tree-trunk {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 100px;
+            background-color: #8b4513;
+            border-radius: 5px;
+        }
+
+        .tree-canopy {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 150px;
+            background-color: var(--primary-green);
+            border-radius: 50%;
+            opacity: 0.7;
+        }
+
+        .carbon-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .carbon-stat {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .carbon-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: var(--light-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-green);
+            font-size: 1.25rem;
+        }
+
+        .carbon-info {
+            flex: 1;
+        }
+
+        .carbon-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 0.25rem;
+        }
+
+        .carbon-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background-color: var(--text-dark);
+            color: var(--white);
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .footer-description {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-link {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .social-link:hover {
+            background-color: var(--primary-green);
+            transform: translateY(-2px);
+        }
+
+        .footer-column h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--white);
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer-link {
+            color: #94a3b8;
+            transition: var(--transition);
+        }
+
+        .footer-link:hover {
+            color: var(--primary-green);
+            padding-left: 0.5rem;
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* ===== MODALS ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: var(--white);
+            border-radius: var(--border-radius-lg);
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--text-dark);
+            background-color: var(--light-gray);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--medium-gray);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            background-color: var(--white);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* ===== NOTIFICATIONS ===== */
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 3000;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .notification-success .notification-icon {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .notification-warning .notification-icon {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--orange);
+        }
+
+        .notification-error .notification-icon {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--warning);
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-message {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 1.25rem;
+            padding: 0.25rem;
+        }
+
+        /* ===== LOADING STATES ===== */
+        .loading {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid var(--medium-gray);
+            border-radius: 50%;
+            border-top-color: var(--primary-green);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .hero-text h1 {
+                font-size: 3rem;
+            }
+            
+            .plans-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .plan-card.popular {
+                transform: none;
+            }
+            
+            .plan-card.popular:hover {
+                transform: translateY(-8px);
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-text p {
+                max-width: 100%;
+            }
+            
+            .hero-visual {
+                order: -1;
+            }
+            
+            .energy-orb {
+                width: 20rem;
+                height: 20rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .billing-grid,
+            .support-grid,
+            .discom-grid,
+            .carbon-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .plans-grid {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-stats {
+                grid-template-columns: 1fr;
+                max-width: 300px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .hero-section {
+                padding: 3rem 0;
+            }
+            
+            .dashboard-section,
+            .plans-section,
+            .billing-section,
+            .support-section,
+            .discom-section,
+            .carbon-section {
+                padding: 3rem 0;
+            }
+            
+            .modal {
+                width: 95%;
+            }
+            
+            .modal-header,
+            .modal-body,
+            .modal-footer {
+                padding: 1.25rem;
+            }
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+
+        /* ===== CUSTOM SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light-gray);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--medium-gray);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--dark-gray);
+        }
+
+        /* ===== PRINT STYLES ===== */
+        @media print {
+            header,
+            footer,
+            .btn,
+            .notification,
+            .modal-overlay {
+                display: none !important;
+            }
+            
+            body {
+                background-color: white;
+                color: black;
+            }
+            
+            .container {
+                max-width: 100%;
+                padding: 0;
+            }
+            
+            .chart-card,
+            .stat-card,
+            .device-card,
+            .plan-card,
+            .invoice-card,
+            .ticket-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="logo-text">
+                        <span>EcoPower</span>
+                        <span class="logo-subtitle">Energy-as-a-Service</span>
+                    </div>
+                </div>
+                
+                <div class="nav-links">
+                    <a href="#dashboard" class="nav-link active">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#subscription" class="nav-link">
+                        <i class="fas fa-solar-panel"></i>
+                        <span>Services</span>
+                    </a>
+                    <a href="#billing" class="nav-link">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Billing</span>
+                    </a>
+                    <a href="#discom" class="nav-link">
+                        <i class="fas fa-network-wired"></i>
+                        <span>DISCOM</span>
+                    </a>
+                    <a href="#support" class="nav-link">
+                        <i class="fas fa-headset"></i>
+                        <span>Support</span>
+                    </a>
+                    <a href="#analytics" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Analytics</span>
+                    </a>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="notification-btn" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge"></span>
+                    </button>
+                    
+                    <div class="user-profile" id="userProfile">
+                        <div class="user-avatar">
+                            <span>DU</span>
+                        </div>
+                        <div class="user-info">
+                            <span class="user-name">Demo User</span>
+                            <span class="user-plan">Solar Premium Plan</span>
+                        </div>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text fade-in">
+                    <h1>Clean Energy, <span>Simplified.</span></h1>
+                    <p>Subscribe to solar power, battery backup, and smart energy management without owning or maintaining any equipment. No upfront costs, no technical hassles.</p>
+                    
+                    <div class="cta-buttons d-flex gap-2 mb-4">
+                        <button class="btn btn-primary btn-lg" id="subscribeBtn">
+                            <i class="fas fa-bolt"></i>
+                            <span>Subscribe Now</span>
+                        </button>
+                        <button class="btn btn-secondary btn-lg" id="learnMoreBtn">
+                            <i class="fas fa-play-circle"></i>
+                            <span>How It Works</span>
+                        </button>
+                    </div>
+                    
+                    <div class="hero-stats">
+                        <div class="hero-stat fade-in delay-1">
+                            <div class="hero-stat-number">5,000+</div>
+                            <div class="hero-stat-label">Happy Customers</div>
+                        </div>
+                        <div class="hero-stat fade-in delay-2">
+                            <div class="hero-stat-number">25 MW</div>
+                            <div class="hero-stat-label">Clean Energy Generated</div>
+                        </div>
+                        <div class="hero-stat fade-in delay-3">
+                            <div class="hero-stat-number">500+</div>
+                            <div class="hero-stat-label">Tonnes CO₂ Saved</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hero-visual fade-in delay-4">
+                    <div class="energy-orb">
+                        <div class="orb-core">100% Green</div>
+                        <div class="energy-particle"></div>
+                        <div class="energy-particle"></div>
+                        <div class="energy-particle"></div>
+                        <div class="energy-particle"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section class="dashboard-section" id="dashboard">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Energy Dashboard</h2>
+                    <p class="section-subtitle">Monitor your energy consumption, savings, and carbon impact in real-time</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline" id="refreshData">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Refresh</span>
+                    </button>
+                    <button class="btn btn-outline" id="exportData">
+                        <i class="fas fa-download"></i>
+                        <span>Export</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="dashboard-grid">
+                <!-- Row 1: Key Metrics -->
+                <div class="stat-card col-3 col-md-6 col-sm-12 fade-in">
+                    <div class="stat-card-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-sun"></i>
+                        </div>
+                        <div class="stat-trend trend-up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>12%</span>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="solarGeneration">42.5 kWh</div>
+                    <div class="stat-label">Solar Generation Today</div>
+                    <div class="stat-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span>Target: 50 kWh</span>
+                            <span>85%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card col-3 col-md-6 col-sm-12 fade-in delay-1">
+                    <div class="stat-card-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-plug"></i>
+                        </div>
+                        <div class="stat-trend trend-down">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>8%</span>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="energyConsumption">28.3 kWh</div>
+                    <div class="stat-label">Energy Consumption Today</div>
+                    <div class="stat-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span>Limit: 35 kWh</span>
+                            <span>65%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card col-3 col-md-6 col-sm-12 fade-in delay-2">
+                    <div class="stat-card-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-piggy-bank"></i>
+                        </div>
+                        <div class="stat-trend trend-up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>15%</span>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="costSavings">₹ 3,245</div>
+                    <div class="stat-label">Monthly Savings</div>
+                    <div class="stat-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 72%"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span>Target: ₹ 4,500</span>
+                            <span>72%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card col-3 col-md-6 col-sm-12 fade-in delay-3">
+                    <div class="stat-card-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <div class="stat-trend trend-up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>22%</span>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="carbonReduction">182 kg</div>
+                    <div class="stat-label">CO₂ Saved This Month</div>
+                    <div class="stat-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 60%"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span>Target: 300 kg</span>
+                            <span>60%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Row 2: Charts -->
+                <div class="chart-card col-8 col-md-12 fade-in delay-1">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Energy Flow Analysis</h3>
+                        <div class="chart-actions">
+                            <select class="form-select btn-sm" id="timeRange" style="width: auto;">
+                                <option>Last 24 hours</option>
+                                <option>Last 7 days</option>
+                                <option>This month</option>
+                                <option>Last quarter</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="energyFlowChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card col-4 col-md-12 fade-in delay-2">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Energy Sources</h3>
+                        <div class="chart-actions">
+                            <select class="form-select btn-sm" id="sourceFilter" style="width: auto;">
+                                <option>Today</option>
+                                <option>This Week</option>
+                                <option>This Month</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="energySourcesChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Row 3: IoT Devices -->
+                <div class="col-12 fade-in delay-3">
+                    <div class="d-flex justify-between align-center mb-3">
+                        <h3 class="section-title" style="font-size: 1.5rem;">Connected Devices</h3>
+                        <button class="btn btn-outline btn-sm" id="manageDevices">
+                            <i class="fas fa-cog"></i>
+                            <span>Manage Devices</span>
+                        </button>
+                    </div>
+                    
+                    <div class="devices-grid">
+                        <div class="device-card">
+                            <div class="device-header">
+                                <div class="device-icon">
+                                    <i class="fas fa-solar-panel"></i>
+                                </div>
+                                <div class="device-status status-online">Online</div>
+                            </div>
+                            <div class="device-name">Solar Inverter 1</div>
+                            <div class="device-location">Roof - South Side</div>
+                            <div class="device-stats">
+                                <div class="device-stat">
+                                    <div class="device-stat-value">4.2 kW</div>
+                                    <div class="device-stat-label">Current Output</div>
+                                </div>
+                                <div class="device-stat">
+                                    <div class="device-stat-value">98%</div>
+                                    <div class="device-stat-label">Efficiency</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="device-card">
+                            <div class="device-header">
+                                <div class="device-icon">
+                                    <i class="fas fa-car-battery"></i>
+                                </div>
+                                <div class="device-status status-online">Online</div>
+                            </div>
+                            <div class="device-name">Battery Bank</div>
+                            <div class="device-location">Basement</div>
+                            <div class="device-stats">
+                                <div class="device-stat">
+                                    <div class="device-stat-value">85%</div>
+                                    <div class="device-stat-label">Charge Level</div>
+                                </div>
+                                <div class="device-stat">
+                                    <div class="device-stat-value">10 kWh</div>
+                                    <div class="device-stat-label">Capacity</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="device-card">
+                            <div class="device-header">
+                                <div class="device-icon">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                </div>
+                                <div class="device-status status-online">Online</div>
+                            </div>
+                            <div class="device-name">Smart Meter</div>
+                            <div class="device-location">Main Entrance</div>
+                            <div class="device-stats">
+                                <div class="device-stat">
+                                    <div class="device-stat-value">28.3</div>
+                                    <div class="device-stat-label">kWh Today</div>
+                                </div>
+                                <div class="device-stat">
+                                    <div class="device-stat-value">₹ 245</div>
+                                    <div class="device-stat-label">Cost Today</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="device-card">
+                            <div class="device-header">
+                                <div class="device-icon">
+                                    <i class="fas fa-thermometer-half"></i>
+                                </div>
+                                <div class="device-status status-offline">Offline</div>
+                            </div>
+                            <div class="device-name">Weather Station</div>
+                            <div class="device-location">Roof</div>
+                            <div class="device-stats">
+                                <div class="device-stat">
+                                    <div class="device-stat-value">--</div>
+                                    <div class="device-stat-label">Irradiance</div>
+                                </div>
+                                <div class="device-stat">
+                                    <div class="device-stat-value">--</div>
+                                    <div class="device-stat-label">Temperature</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Subscription Plans -->
+    <section class="plans-section" id="subscription">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Energy Service Plans</h2>
+                    <p class="section-subtitle">Choose the perfect plan for your needs. No upfront costs, cancel anytime.</p>
+                </div>
+                <div class="d-flex align-center gap-2">
+                    <div class="form-check">
+                        <input type="checkbox" id="annualBilling" class="form-check-input">
+                        <label for="annualBilling" class="form-check-label">Annual Billing (Save 20%)</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="plans-grid">
+                <div class="plan-card fade-in">
+                    <div class="plan-header">
+                        <h3 class="plan-name">Solar Basic</h3>
+                        <p class="plan-description">For small homes & apartments</p>
+                        <div class="plan-price">₹ 1,499<span>/month</span></div>
+                    </div>
+                    
+                    <div class="plan-features">
+                        <div class="plan-feature">
+                            <i class="fas fa-check feature-icon"></i>
+                            <div class="feature-text feature-included">5 kW Solar Power</div>
+                        </div>
+                        <div class="plan-feature">
+                            <i class="fas fa-check feature-icon"></i>
+                            <div class="feature-text feature-included">Basic Monitoring</div>
+                        </div>
+                        <div class="plan-feature">
+                            <i class="fas fa-check feature-icon"></i>
+                            <div class="feature-text feature-included">5 kWh Battery Backup</div>
+                        </div>
+                        <div class="plan-feature">
+                            <i class="fas fa-check feature-icon"></i>
+                            <div class="feature-text feature-included">Grid Synchronization</div>
+                        </div>
+                        <div class="plan-feature">
+                            <i class="fas fa-times feature-icon" style="color: var(--text-light);"></i>
+                            <div class="feature-text feature-excluded">Priority Support</div>
+                        </div>
+                        <div class="plan-feature">
+                            <i class="fas fa-times feature-icon" style="color: var(--text-light);"></i>
+                            <div class="feature-text feature-excluded">Smart Load Management</div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-secondary w-100" data-plan="Solar Basic">
+                        Select Plan
+                    </button>
+                </div>
+                
+                <div class="plan-card popular fade-in delay-1">
+                    <div class="popular-badge">MOST POPULAR</div>
+                    <div class="plan-header">
+                        <h3 class="plan-name">Solar Premium</h3>
+                        <p class="plan-description">For homes & small businesses</p>
+                        <div class="plan-price">₹ 2,999<span>/month</span></div>
+                    </div>
+                    
+                    <div class="plan-features">
+                        <div class="plan-feature">
+                            <i class="fas fa-check feature-icon"></i>
+                            <div class="feature-text feature-included">10 kW Solar Power</div>
+                        </div>
+                        <div class="plan-feature">
+                            <i class="fas fa-check feature-icon"></i>
+                            <div class="feature-text feature-included">Advanced Monitoring</div>
+                        </div>
+                        <div class="plan-feature">
+                            <i class="fas fa-check feature-icon"></i>
+                            <div class="feature-text feature-included">10 kWh Battery Backup</div>
+                        </div>
+                        <div class="plan-feature">
+                            <i class="fas fa-check feature-icon"></i>
+                            <div class="feature-text feature-included">Grid Synchronization</div>
+                        </div>
+                        <div class="plan-feature">
+                            <i class="fas fa-check feature-icon"></i>
+                            <div class="feature-text feature-included">Priority Support</div>
+                        </div>
+                        <div class="plan-feature">
+                            <i class="fas fa-times feature-icon" style="color: var(--text-light);"></i>
+                            <div class="feature-text feature-excluded">Smart Load Management</div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary w-100" data-plan="Solar Premium">
+                        Select Plan
+                    </button>
+                </div>
+                
+                <div class="plan-card fade-in delay-2">
+                    <div class="plan-header">
+                        <h3 class="plan-name">Solar Pro</h3>
+                        <p class="plan-description">For large homes & businesses</p>
+                        <div class="plan-price">₹ 4,999<span>/month</span></div>
+                    </div>
+                    
+                    <div class="plan-features">
+                        <div class="plan-feature">
+                            <i class="fas fa-check feature-icon"></i>
+                            <div class="feature-text feature-included">15 kW Solar Power</div>
+                        </div>
+                        <div class="plan-feature">
+                            <i class="fas fa-check feature-icon"></i>
+                            <div class="feature-text feature-included">Premium Monitoring</div>
+                        </div>
+                        <div class="plan-feature">
+                            <i class="fas fa-check feature-icon"></i>
+                            <div class="feature-text feature-included">20 kWh Battery Backup</div>
+                        </div>
+                        <div class="plan-feature">
+                            <i class="fas fa-check feature-icon"></i>
+                            <div class="feature-text feature-included">Grid Synchronization</div>
+                        </div>
+                        <div class="plan-feature">
+                            <i class="fas fa-check feature-icon"></i>
+                            <div class="feature-text feature-included">24/7 Priority Support</div>
+                        </div>
+                        <div class="plan-feature">
+                            <i class="fas fa-check feature-icon"></i>
+                            <div class="feature-text feature-included">Smart Load Management</div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-secondary w-100" data-plan="Solar Pro">
+                        Select Plan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Billing & Payments -->
+    <section class="billing-section" id="billing">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Billing & Payments</h2>
+                    <p class="section-subtitle">Transparent billing with detailed breakdown of your energy services</p>
+                </div>
+                <button class="btn btn-outline" id="viewAllInvoices">
+                    <i class="fas fa-history"></i>
+                    <span>View All Invoices</span>
+                </button>
+            </div>
+            
+            <div class="billing-grid">
+                <div class="invoice-card fade-in">
+                    <div class="invoice-header">
+                        <div>
+                            <h3 class="invoice-title">Current Bill</h3>
+                            <p class="text-light">Due Date: Apr 10, 2023</p>
+                        </div>
+                        <div class="invoice-amount">₹ 2,999.00</div>
+                    </div>
+                    
+                    <div class="invoice-details">
+                        <div class="invoice-detail">
+                            <span class="detail-label">Billing Period</span>
+                            <span class="detail-value">Mar 1 - Mar 31, 2023</span>
+                        </div>
+                        <div class="invoice-detail">
+                            <span class="detail-label">Plan</span>
+                            <span class="detail-value">Solar Premium</span>
+                        </div>
+                        <div class="invoice-detail">
+                            <span class="detail-label">Status</span>
+                            <span class="detail-value" style="color: var(--success);">Up to date</span>
+                        </div>
+                        <div class="invoice-detail">
+                            <span class="detail-label">Next Billing</span>
+                            <span class="detail-value">Apr 25, 2023</span>
+                        </div>
+                    </div>
+                    
+                    <h4 class="mb-3">Bill Breakdown</h4>
+                    <div class="invoice-items">
+                        <div class="invoice-item">
+                            <span class="item-label">Solar Premium Plan</span>
+                            <span class="item-value">₹ 2,999.00</span>
+                        </div>
+                        <div class="invoice-item">
+                            <span class="item-label">Grid Import (12.5 kWh @ ₹9/kWh)</span>
+                            <span class="item-value">₹ 112.50</span>
+                        </div>
+                        <div class="invoice-item">
+                            <span class="item-label">Grid Export Credit (8.2 kWh @ ₹9/kWh)</span>
+                            <span class="item-value" style="color: var(--success);">- ₹ 73.80</span>
+                        </div>
+                        <div class="invoice-item">
+                            <span class="item-label">Service Tax (18%)</span>
+                            <span class="item-value">₹ 540.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="invoice-total">
+                        <span>Total Amount</span>
+                        <span>₹ 2,999.00</span>
+                    </div>
+                    
+                    <button class="btn btn-primary w-100 mt-4" id="payNowBtn">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Pay Now</span>
+                    </button>
+                </div>
+                
+                <div class="fade-in delay-1">
+                    <div class="invoice-card mb-4">
+                        <h3 class="mb-3">Payment Methods</h3>
+                        
+                        <div class="payment-methods">
+                            <div class="payment-method" data-method="card">
+                                <div class="payment-icon">
+                                    <i class="fas fa-credit-card"></i>
+                                </div>
+                                <div class="payment-name">Credit/Debit Card</div>
+                            </div>
+                            
+                            <div class="payment-method" data-method="netbanking">
+                                <div class="payment-icon">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <div class="payment-name">Net Banking</div>
+                            </div>
+                            
+                            <div class="payment-method" data-method="upi">
+                                <div class="payment-icon">
+                                    <i class="fas fa-qrcode"></i>
+                                </div>
+                                <div class="payment-name">UPI</div>
+                            </div>
+                            
+                            <div class="payment-method" data-method="wallet">
+                                <div class="payment-icon">
+                                    <i class="fas fa-wallet"></i>
+                                </div>
+                                <div class="payment-name">Wallets</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h4 class="mb-3">Auto-Pay Settings</h4>
+                            <div class="d-flex justify-between align-center">
+                                <div>
+                                    <div class="font-weight-500">Auto-Pay Enabled</div>
+                                    <div class="text-light text-sm">Card ending in 4242</div>
+                                </div>
+                                <div class="form-switch">
+                                    <input type="checkbox" id="autoPay" class="form-check-input" checked>
+                                    <label for="autoPay" class="form-check-label"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="invoice-card">
+                        <h3 class="mb-3">Payment History</h3>
+                        <div class="invoice-items">
+                            <div class="invoice-item">
+                                <span>Feb 2023</span>
+                                <span style="color: var(--success);">Paid</span>
+                            </div>
+                            <div class="invoice-item">
+                                <span>Jan 2023</span>
+                                <span style="color: var(--success);">Paid</span>
+                            </div>
+                            <div class="invoice-item">
+                                <span>Dec 2022</span>
+                                <span style="color: var(--success);">Paid</span>
+                            </div>
+                            <div class="invoice-item">
+                                <span>Nov 2022</span>
+                                <span style="color: var(--success);">Paid</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DISCOM Integration -->
+    <section class="discom-section" id="discom">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">DISCOM Integration</h2>
+                    <p class="section-subtitle">Seamless integration with distribution companies for net-metering and grid management</p>
+                </div>
+                <button class="btn btn-outline" id="discomSettings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </button>
+            </div>
+            
+            <div class="discom-grid">
+                <div class="discom-visual fade-in">
+                    <div class="grid-visual" id="gridVisual">
+                        <!-- Grid nodes will be created by JavaScript -->
+                    </div>
+                    
+                    <div class="discom-stats mt-4">
+                        <div class="discom-stat">
+                            <div class="discom-stat-value">95%</div>
+                            <div class="discom-stat-label">Grid Sync Uptime</div>
+                        </div>
+                        <div class="discom-stat">
+                            <div class="discom-stat-value">42.5 kWh</div>
+                            <div class="discom-stat-label">Net Export Today</div>
+                        </div>
+                        <div class="discom-stat">
+                            <div class="discom-stat-value">12.5 kWh</div>
+                            <div class="discom-stat-label">Grid Import Today</div>
+                        </div>
+                        <div class="discom-stat">
+                            <div class="discom-stat-value">₹ 73.80</div>
+                            <div class="discom-stat-label">Export Earnings</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="fade-in delay-1">
+                    <div class="invoice-card">
+                        <h3 class="mb-3">Net-Metering Status</h3>
+                        
+                        <div class="mb-4">
+                            <div class="d-flex justify-between mb-2">
+                                <span>Approval Status</span>
+                                <span style="color: var(--success); font-weight: 500;">Approved</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="invoice-details">
+                            <div class="invoice-detail">
+                                <span class="detail-label">DISCOM</span>
+                                <span class="detail-value">Mahavitaran (MSEDCL)</span>
+                            </div>
+                            <div class="invoice-detail">
+                                <span class="detail-label">Account No.</span>
+                                <span class="detail-value">MSEDCL-2023-0428</span>
+                            </div>
+                            <div class="invoice-detail">
+                                <span class="detail-label">Feed-in Tariff</span>
+                                <span class="detail-value">₹ 9.00/kWh</span>
+                            </div>
+                            <div class="invoice-detail">
+                                <span class="detail-label">Contract Valid Until</span>
+                                <span class="detail-value">Dec 31, 2033</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h4 class="mb-3">Recent Grid Transactions</h4>
+                            <div class="invoice-items">
+                                <div class="invoice-item">
+                                    <span>Today, 14:30</span>
+                                    <span style="color: var(--success);">+2.4 kWh</span>
+                                </div>
+                                <div class="invoice-item">
+                                    <span>Today, 12:15</span>
+                                    <span style="color: var(--warning);">-1.8 kWh</span>
+                                </div>
+                                <div class="invoice-item">
+                                    <span>Today, 10:45</span>
+                                    <span style="color: var(--success);">+3.2 kWh</span>
+                                </div>
+                                <div class="invoice-item">
+                                    <span>Today, 08:20</span>
+                                    <span style="color: var(--success);">+1.5 kWh</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Carbon Impact -->
+    <section class="carbon-section" id="analytics">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Carbon Impact Analytics</h2>
+                    <p class="section-subtitle">Track your environmental contribution and sustainability metrics</p>
+                </div>
+                <button class="btn btn-outline" id="shareImpact">
+                    <i class="fas fa-share-alt"></i>
+                    <span>Share Impact</span>
+                </button>
+            </div>
+            
+            <div class="carbon-grid">
+                <div class="carbon-visual fade-in">
+                    <div class="tree-visual">
+                        <div class="tree-trunk"></div>
+                        <div class="tree-canopy"></div>
+                    </div>
+                </div>
+                
+                <div class="carbon-stats fade-in delay-1">
+                    <div class="carbon-stat">
+                        <div class="carbon-icon">
+                            <i class="fas fa-tree"></i>
+                        </div>
+                        <div class="carbon-info">
+                            <div class="carbon-value">12 Trees</div>
+                            <div class="carbon-label">Equivalent trees planted this month</div>
+                        </div>
+                    </div>
+                    
+                    <div class="carbon-stat">
+                        <div class="carbon-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div class="carbon-info">
+                            <div class="carbon-value">1,240 km</div>
+                            <div class="carbon-label">Car emissions offset this month</div>
+                        </div>
+                    </div>
+                    
+                    <div class="carbon-stat">
+                        <div class="carbon-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="carbon-info">
+                            <div class="carbon-value">2.4 Homes</div>
+                            <div class="carbon-label">Average homes powered for a month</div>
+                        </div>
+                    </div>
+                    
+                    <div class="carbon-stat">
+                        <div class="carbon-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <div class="carbon-info">
+                            <div class="carbon-value">Carbon Neutral</div>
+                            <div class="carbon-label">Your status since Jan 2023</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Support & Service -->
+    <section class="support-section" id="support">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Support & Service Management</h2>
+                    <p class="section-subtitle">Get help with your energy services or report issues</p>
+                </div>
+                <button class="btn btn-primary" id="newTicketBtn">
+                    <i class="fas fa-plus"></i>
+                    <span>New Ticket</span>
+                </button>
+            </div>
+            
+            <div class="support-grid">
+                <div class="fade-in">
+                    <h3 class="mb-3">Recent Tickets</h3>
+                    
+                    <div class="tickets-list">
+                        <div class="ticket-card">
+                            <div class="ticket-header">
+                                <div class="ticket-id">#TKT-2023-0428</div>
+                                <div>
+                                    <span class="ticket-status status-open">Open</span>
+                                    <span class="ticket-priority priority-high">High</span>
+                                </div>
+                            </div>
+                            <div class="ticket-title">Inverter Not Charging</div>
+                            <div class="ticket-description">Solar inverter showing error code E03, not charging batteries properly. Noticed this morning around 9 AM.</div>
+                            <div class="ticket-footer">
+                                <div class="ticket-date">
+                                    <i class="far fa-clock"></i>
+                                    <span>Created: Mar 15, 2023</span>
+                                </div>
+                                <button class="btn btn-outline btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                    <span>View Details</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="ticket-card">
+                            <div class="ticket-header">
+                                <div class="ticket-id">#TKT-2023-0415</div>
+                                <div>
+                                    <span class="ticket-status status-open">Open</span>
+                                    <span class="ticket-priority priority-medium">Medium</span>
+                                </div>
+                            </div>
+                            <div class="ticket-title">Meter Reading Discrepancy</div>
+                            <div class="ticket-description">February meter reading seems higher than actual consumption. Difference of about 15% from expected values.</div>
+                            <div class="ticket-footer">
+                                <div class="ticket-date">
+                                    <i class="far fa-clock"></i>
+                                    <span>Created: Mar 10, 2023</span>
+                                </div>
+                                <button class="btn btn-outline btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                    <span>View Details</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="ticket-card">
+                            <div class="ticket-header">
+                                <div class="ticket-id">#TKT-2023-0402</div>
+                                <div>
+                                    <span class="ticket-status" style="background-color: rgba(16, 185, 129, 0.1); color: var(--success);">Resolved</span>
+                                    <span class="ticket-priority priority-low">Low</span>
+                                </div>
+                            </div>
+                            <div class="ticket-title">Mobile App Notification Issue</div>
+                            <div class="ticket-description">Not receiving push notifications for energy alerts on mobile app. Already tried reinstalling the app.</div>
+                            <div class="ticket-footer">
+                                <div class="ticket-date">
+                                    <i class="far fa-clock"></i>
+                                    <span>Resolved: Mar 5, 2023</span>
+                                </div>
+                                <button class="btn btn-outline btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                    <span>View Details</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="fade-in delay-1">
+                    <div class="quick-actions">
+                        <h3 class="mb-3">Quick Actions</h3>
+                        
+                        <div class="quick-action" id="actionOutage">
+                            <div class="action-icon">
+                                <i class="fas fa-power-off"></i>
+                            </div>
+                            <div class="action-text">
+                                <div class="action-title">Report Outage</div>
+                                <div class="action-description">Report power outage or service disruption</div>
+                            </div>
+                        </div>
+                        
+                        <div class="quick-action" id="actionMeter">
+                            <div class="action-icon">
+                                <i class="fas fa-tachometer-alt"></i>
+                            </div>
+                            <div class="action-text">
+                                <div class="action-title">Meter Reading</div>
+                                <div class="action-description">Submit manual meter reading</div>
+                            </div>
+                        </div>
+                        
+                        <div class="quick-action" id="actionSchedule">
+                            <div class="action-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="action-text">
+                                <div class="action-title">Schedule Maintenance</div>
+                                <div class="action-description">Book preventive maintenance</div>
+                            </div>
+                        </div>
+                        
+                        <div class="quick-action" id="actionDocs">
+                            <div class="action-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="action-text">
+                                <div class="action-title">Documentation</div>
+                                <div class="action-description">User manuals and guides</div>
+                            </div>
+                        </div>
+                        
+                        <div class="quick-action" id="actionContact">
+                            <div class="action-icon">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div class="action-text">
+                                <div class="action-title">Contact Support</div>
+                                <div class="action-description">24/7 phone and chat support</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-logo">
+                    <div class="logo d-flex align-center gap-2 mb-3">
+                        <div class="logo-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="logo-text text-white">
+                            <span>EcoPower</span>
+                            <span class="logo-subtitle">Energy-as-a-Service</span>
+                        </div>
+                    </div>
+                    <p class="footer-description">Making clean energy accessible and affordable through the Energy-as-a-Service model. Join the renewable revolution today.</p>
+                    
+                    <div class="social-links">
+                        <a href="#" class="social-link">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Services</h3>
+                    <div class="footer-links">
+                        <a href="#" class="footer-link">Solar Power</a>
+                        <a href="#" class="footer-link">Battery Backup</a>
+                        <a href="#" class="footer-link">Smart Load Management</a>
+                        <a href="#" class="footer-link">Energy Monitoring</a>
+                        <a href="#" class="footer-link">Grid Synchronization</a>
+                        <a href="#" class="footer-link">EV Charging</a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Company</h3>
+                    <div class="footer-links">
+                        <a href="#" class="footer-link">About Us</a>
+                        <a href="#" class="footer-link">Careers</a>
+                        <a href="#" class="footer-link">Partners</a>
+                        <a href="#" class="footer-link">Blog</a>
+                        <a href="#" class="footer-link">Press</a>
+                        <a href="#" class="footer-link">Sustainability Report</a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Contact</h3>
+                    <div class="footer-links">
+                        <a href="mailto:support@ecopower.com" class="footer-link">
+                            <i class="fas fa-envelope"></i>
+                            <span>support@ecopower.com</span>
+                        </a>
+                        <a href="tel:+9118001234567" class="footer-link">
+                            <i class="fas fa-phone"></i>
+                            <span>+91 1800-123-4567</span>
+                        </a>
+                        <a href="#" class="footer-link">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Mumbai, India</span>
+                        </a>
+                        <a href="#" class="footer-link">
+                            <i class="fas fa-clock"></i>
+                            <span>24/7 Support Available</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div>
+                    <p>© 2023 EcoPower Energy-as-a-Service Platform. All rights reserved.</p>
+                </div>
+                <div class="d-flex gap-4">
+                    <a href="#" class="footer-link">Privacy Policy</a>
+                    <a href="#" class="footer-link">Terms of Service</a>
+                    <a href="#" class="footer-link">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="subscriptionModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Subscribe to <span id="selectedPlanName">Solar Premium</span></h3>
+                <button class="modal-close" id="closeSubscriptionModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-4">Complete your subscription in less than 5 minutes. No upfront costs, cancel anytime.</p>
+                
+                <form id="subscriptionForm">
+                    <div class="form-group">
+                        <label class="form-label" for="serviceAddress">Service Address</label>
+                        <input type="text" id="serviceAddress" class="form-control" placeholder="Enter your complete service address" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="monthlyConsumption">Average Monthly Consumption</label>
+                            <input type="number" id="monthlyConsumption" class="form-control" placeholder="Enter in kWh" min="100" max="5000" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="roofArea">Available Roof Area (sq. ft.)</label>
+                            <input type="number" id="roofArea" class="form-control" placeholder="Approximate area" min="100" max="10000">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="installDate">Preferred Installation Date</label>
+                            <input type="date" id="installDate" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="timeSlot">Preferred Time Slot</label>
+                            <select id="timeSlot" class="form-select">
+                                <option>Morning (9 AM - 12 PM)</option>
+                                <option>Afternoon (12 PM - 3 PM)</option>
+                                <option>Evening (3 PM - 6 PM)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="specialRequirements">Special Requirements (Optional)</label>
+                        <textarea id="specialRequirements" class="form-control" rows="3" placeholder="Any specific requirements or constraints..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="checkbox" id="agreeTerms" class="form-check-input" required>
+                            <label for="agreeTerms" class="form-check-label">
+                                I agree to the <a href="#" class="text-green">Terms of Service</a> and <a href="#" class="text-green">Privacy Policy</a>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelSubscription">Cancel</button>
+                <button class="btn btn-primary" id="confirmSubscription">
+                    <i class="fas fa-bolt"></i>
+                    <span>Subscribe Now</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Payment Details</h3>
+                <button class="modal-close" id="closePaymentModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4">
+                    <div class="d-flex justify-between align-center mb-2">
+                        <span>Amount to Pay</span>
+                        <span class="invoice-amount" style="font-size: 1.75rem;">₹ 2,999.00</span>
+                    </div>
+                    <div class="text-light text-sm">Invoice #INV-2023-0428 • Due Date: Apr 10, 2023</div>
+                </div>
+                
+                <form id="paymentForm">
+                    <div class="form-group">
+                        <label class="form-label">Payment Method</label>
+                        <div class="payment-methods">
+                            <div class="payment-method active" data-method="card">
+                                <div class="payment-icon">
+                                    <i class="fas fa-credit-card"></i>
+                                </div>
+                                <div class="payment-name">Card</div>
+                            </div>
+                            <div class="payment-method" data-method="netbanking">
+                                <div class="payment-icon">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <div class="payment-name">Net Banking</div>
+                            </div>
+                            <div class="payment-method" data-method="upi">
+                                <div class="payment-icon">
+                                    <i class="fas fa-qrcode"></i>
+                                </div>
+                                <div class="payment-name">UPI</div>
+                            </div>
+                            <div class="payment-method" data-method="wallet">
+                                <div class="payment-icon">
+                                    <i class="fas fa-wallet"></i>
+                                </div>
+                                <div class="payment-name">Wallet</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="cardDetails" class="form-group">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="cardNumber">Card Number</label>
+                                <input type="text" id="cardNumber" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="cardName">Name on Card</label>
+                                <input type="text" id="cardName" class="form-control" placeholder="John Doe">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="expiryDate">Expiry Date</label>
+                                <input type="text" id="expiryDate" class="form-control" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="cvv">CVV</label>
+                                <input type="text" id="cvv" class="form-control" placeholder="123" maxlength="3">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="otherPaymentDetails" class="d-none">
+                        <!-- Other payment method details would go here -->
+                        <div class="text-center p-4">
+                            <i class="fas fa-qrcode text-green" style="font-size: 4rem; margin-bottom: 1rem;"></i>
+                            <p>Scan the QR code with your payment app to complete the transaction</p>
+                            <div class="text-light text-sm mt-2">Payment reference: ECOPOWER-2023-0428</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="checkbox" id="saveCard" class="form-check-input">
+                            <label for="saveCard" class="form-check-label">Save card for future payments</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelPayment">Cancel</button>
+                <button class="btn btn-primary" id="processPayment">
+                    <i class="fas fa-lock"></i>
+                    <span>Pay ₹ 2,999.00</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="ticketModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Create New Support Ticket</h3>
+                <button class="modal-close" id="closeTicketModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="ticketForm">
+                    <div class="form-group">
+                        <label class="form-label" for="ticketSubject">Subject</label>
+                        <input type="text" id="ticketSubject" class="form-control" placeholder="Brief description of the issue" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="ticketCategory">Category</label>
+                            <select id="ticketCategory" class="form-select" required>
+                                <option value="">Select category</option>
+                                <option>Solar Equipment</option>
+                                <option>Battery System</option>
+                                <option>Meter/Billing</option>
+                                <option>Mobile App</option>
+                                <option>Grid Connection</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="ticketPriority">Priority</label>
+                            <select id="ticketPriority" class="form-select" required>
+                                <option value="">Select priority</option>
+                                <option>Low</option>
+                                <option>Medium</option>
+                                <option>High</option>
+                                <option>Critical</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="ticketDescription">Description</label>
+                        <textarea id="ticketDescription" class="form-control" rows="5" placeholder="Please provide detailed information about the issue..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Attachments (Optional)</label>
+                        <div class="file-upload">
+                            <input type="file" id="ticketAttachment" class="form-control" accept="image/*,.pdf,.doc,.docx">
+                            <div class="text-light text-sm mt-1">Max file size: 5MB. Supported formats: JPG, PNG, PDF, DOC</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="checkbox" id="urgentCallback" class="form-check-input">
+                            <label for="urgentCallback" class="form-check-label">Request urgent callback from support team</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelTicket">Cancel</button>
+                <button class="btn btn-primary" id="submitTicket">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Submit Ticket</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="notificationModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Notifications</h3>
+                <button class="modal-close" id="closeNotificationModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-list">
+                    <div class="notification-item unread">
+                        <div class="notification-icon">
+                            <i class="fas fa-bolt text-green"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">High Solar Generation Alert</div>
+                            <div class="notification-message">Your solar system is generating at 95% capacity right now.</div>
+                            <div class="notification-time">2 hours ago</div>
+                        </div>
+                    </div>
+                    
+                    <div class="notification-item unread">
+                        <div class="notification-icon">
+                            <i class="fas fa-exclamation-triangle text-orange"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">Battery Maintenance Due</div>
+                            <div class="notification-message">Scheduled maintenance for your battery system is due next week.</div>
+                            <div class="notification-time">1 day ago</div>
+                        </div>
+                    </div>
+                    
+                    <div class="notification-item">
+                        <div class="notification-icon">
+                            <i class="fas fa-file-invoice-dollar text-info"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">Invoice Generated</div>
+                            <div class="notification-message">Your monthly invoice for March 2023 is now available.</div>
+                            <div class="notification-time">2 days ago</div>
+                        </div>
+                    </div>
+                    
+                    <div class="notification-item">
+                        <div class="notification-icon">
+                            <i class="fas fa-cloud-sun text-green"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">Weather Alert</div>
+                            <div class="notification-message">Sunny weather forecasted for next 3 days. Expect high solar generation.</div>
+                            <div class="notification-time">3 days ago</div>
+                        </div>
+                    </div>
+                    
+                    <div class="notification-item">
+                        <div class="notification-icon">
+                            <i class="fas fa-shield-alt text-purple"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">System Update Complete</div>
+                            <div class="notification-message">Your solar inverter firmware has been successfully updated.</div>
+                            <div class="notification-time">1 week ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="markAllRead">Mark All as Read</button>
+                <button class="btn btn-outline" id="clearNotifications">Clear All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="notification notification-success" id="successNotification">
+        <div class="notification-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="notification-content">
+            <div class="notification-title">Success!</div>
+            <div class="notification-message" id="successMessage">Operation completed successfully.</div>
+        </div>
+        <button class="notification-close">&times;</button>
+    </div>
+    
+    <div class="notification notification-warning" id="warningNotification">
+        <div class="notification-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="notification-content">
+            <div class="notification-title">Warning</div>
+            <div class="notification-message" id="warningMessage">Please check your input.</div>
+        </div>
+        <button class="notification-close">&times;</button>
+    </div>
+    
+    <div class="notification notification-error" id="errorNotification">
+        <div class="notification-icon">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <div class="notification-content">
+            <div class="notification-title">Error</div>
+            <div class="notification-message" id="errorMessage">Something went wrong. Please try again.</div>
+        </div>
+        <button class="notification-close">&times;</button>
+    </div>
+
+    <script>
+        // ===== GLOBAL VARIABLES =====
+        let currentPlan = 'Solar Premium';
+        let notifications = [
+            { id: 1, title: 'High Solar Generation Alert', message: 'Your solar system is generating at 95% capacity right now.', time: '2 hours ago', read: false, icon: 'bolt', color: 'green' },
+            { id: 2, title: 'Battery Maintenance Due', message: 'Scheduled maintenance for your battery system is due next week.', time: '1 day ago', read: false, icon: 'exclamation-triangle', color: 'orange' },
+            { id: 3, title: 'Invoice Generated', message: 'Your monthly invoice for March 2023 is now available.', time: '2 days ago', read: true, icon: 'file-invoice-dollar', color: 'info' },
+            { id: 4, title: 'Weather Alert', message: 'Sunny weather forecasted for next 3 days. Expect high solar generation.', time: '3 days ago', read: true, icon: 'cloud-sun', color: 'green' },
+            { id: 5, title: 'System Update Complete', message: 'Your solar inverter firmware has been successfully updated.', time: '1 week ago', read: true, icon: 'shield-alt', color: 'purple' }
+        ];
+
+        // ===== DOM ELEMENTS =====
+        const subscriptionModal = document.getElementById('subscriptionModal');
+        const paymentModal = document.getElementById('paymentModal');
+        const ticketModal = document.getElementById('ticketModal');
+        const notificationModal = document.getElementById('notificationModal');
+        const successNotification = document.getElementById('successNotification');
+        const warningNotification = document.getElementById('warningNotification');
+        const errorNotification = document.getElementById('errorNotification');
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+            initializeGridVisual();
+            setupEventListeners();
+            initializeDateFields();
+            updateRealTimeData();
+            startDataUpdates();
+        });
+
+        // ===== CHART INITIALIZATION =====
+        function initializeCharts() {
+            // Energy Flow Chart
+            const energyFlowCtx = document.getElementById('energyFlowChart').getContext('2d');
+            new Chart(energyFlowCtx, {
+                type: 'line',
+                data: {
+                    labels: ['12 AM', '4 AM', '8 AM', '12 PM', '4 PM', '8 PM', '12 AM'],
+                    datasets: [
+                        {
+                            label: 'Solar Generation',
+                            data: [0, 0, 15, 42, 38, 8, 0],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#10b981',
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: 'Consumption',
+                            data: [8, 6, 10, 12, 18, 22, 10],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#3b82f6',
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: 'Grid Import',
+                            data: [8, 6, 5, 2, 1, 14, 10],
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#f59e0b',
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                            titleColor: '#f8fafc',
+                            bodyColor: '#f8fafc',
+                            borderColor: '#475569',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(226, 232, 240, 0.5)'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'kWh',
+                                color: '#64748b'
+                            },
+                            grid: {
+                                color: 'rgba(226, 232, 240, 0.5)'
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'nearest'
+                    }
+                }
+            });
+
+            // Energy Sources Chart
+            const energySourcesCtx = document.getElementById('energySourcesChart').getContext('2d');
+            new Chart(energySourcesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Solar', 'Battery', 'Grid Import', 'Grid Export'],
+                    datasets: [{
+                        data: [42, 18, 12, 8],
+                        backgroundColor: [
+                            '#10b981',
+                            '#8b5cf6',
+                            '#f59e0b',
+                            '#3b82f6'
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} kWh (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+        }
+
+        // ===== GRID VISUALIZATION =====
+        function initializeGridVisual() {
+            const gridVisual = document.getElementById('gridVisual');
+            const nodes = 12;
+            
+            // Create grid nodes
+            for (let i = 0; i < nodes; i++) {
+                const node = document.createElement('div');
+                node.className = 'grid-node';
+                
+                // Random position within the grid
+                const x = 20 + Math.random() * 60;
+                const y = 20 + Math.random() * 60;
+                
+                node.style.left = `${x}%`;
+                node.style.top = `${y}%`;
+                
+                // Add animation for some nodes
+                if (i < 4) {
+                    node.style.animation = `pulse 2s infinite ${i * 0.5}s`;
+                }
+                
+                gridVisual.appendChild(node);
+            }
+            
+            // Add CSS for pulse animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes pulse {
+                    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+                    70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+                    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // ===== EVENT LISTENERS =====
+        function setupEventListeners() {
+            // Navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    
+                    if (targetSection) {
+                        // Update active nav link
+                        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        // Scroll to section
+                        window.scrollTo({
+                            top: targetSection.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Subscription Modal
+            document.getElementById('subscribeBtn').addEventListener('click', () => {
+                showModal(subscriptionModal);
+                document.getElementById('selectedPlanName').textContent = 'Solar Premium';
+            });
+
+            document.querySelectorAll('[data-plan]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const plan = this.getAttribute('data-plan');
+                    document.getElementById('selectedPlanName').textContent = plan;
+                    showModal(subscriptionModal);
+                });
+            });
+
+            document.getElementById('closeSubscriptionModal').addEventListener('click', () => hideModal(subscriptionModal));
+            document.getElementById('cancelSubscription').addEventListener('click', () => hideModal(subscriptionModal));
+
+            document.getElementById('confirmSubscription').addEventListener('click', () => {
+                const address = document.getElementById('serviceAddress').value;
+                const consumption = document.getElementById('monthlyConsumption').value;
+                const date = document.getElementById('installDate').value;
+
+                if (!address || !consumption || !date) {
+                    showNotification('Please fill all required fields before subscribing.', 'warning');
+                    return;
+                }
+
+                const plan = document.getElementById('selectedPlanName').textContent;
+                currentPlan = plan;
+                
+                // Update user info
+                document.querySelector('.user-plan').textContent = `${plan} Plan`;
+                
+                // Show success notification
+                showNotification(`Successfully subscribed to ${plan}! Service installation scheduled.`, 'success');
+                
+                // Reset form and close modal
+                document.getElementById('subscriptionForm').reset();
+                hideModal(subscriptionModal);
+            });
+
+            // Payment Modal
+            document.getElementById('payNowBtn').addEventListener('click', () => showModal(paymentModal));
+            document.getElementById('closePaymentModal').addEventListener('click', () => hideModal(paymentModal));
+            document.getElementById('cancelPayment').addEventListener('click', () => hideModal(paymentModal));
+
+            document.querySelectorAll('#paymentForm .payment-method').forEach(method => {
+                method.addEventListener('click', function() {
+                    document.querySelectorAll('#paymentForm .payment-method').forEach(m => m.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const methodType = this.getAttribute('data-method');
+                    if (methodType === 'card') {
+                        document.getElementById('cardDetails').classList.remove('d-none');
+                        document.getElementById('otherPaymentDetails').classList.add('d-none');
+                    } else {
+                        document.getElementById('cardDetails').classList.add('d-none');
+                        document.getElementById('otherPaymentDetails').classList.remove('d-none');
+                    }
+                });
+            });
+
+            document.getElementById('processPayment').addEventListener('click', () => {
+                // Simulate payment processing
+                showNotification('Processing payment...', 'info');
+                
+                setTimeout(() => {
+                    hideModal(paymentModal);
+                    showNotification('Payment successful! Your invoice has been marked as paid.', 'success');
+                }, 2000);
+            });
+
+            // Ticket Modal
+            document.getElementById('newTicketBtn').addEventListener('click', () => showModal(ticketModal));
+            document.getElementById('closeTicketModal').addEventListener('click', () => hideModal(ticketModal));
+            document.getElementById('cancelTicket').addEventListener('click', () => hideModal(ticketModal));
+
+            document.getElementById('submitTicket').addEventListener('click', () => {
+                const subject = document.getElementById('ticketSubject').value;
+                const category = document.getElementById('ticketCategory').value;
+                const description = document.getElementById('ticketDescription').value;
+
+                if (!subject || !category || !description) {
+                    showNotification('Please fill all required fields.', 'warning');
+                    return;
+                }
+
+                // Simulate ticket submission
+                showNotification('Submitting ticket...', 'info');
+                
+                setTimeout(() => {
+                    document.getElementById('ticketForm').reset();
+                    hideModal(ticketModal);
+                    showNotification('Support ticket created successfully. Ticket ID: #TKT-2023-0501', 'success');
+                }, 1500);
+            });
+
+            // Notification Modal
+            document.getElementById('notificationBtn').addEventListener('click', () => showModal(notificationModal));
+            document.getElementById('closeNotificationModal').addEventListener('click', () => hideModal(notificationModal));
+
+            // Quick Actions
+            document.getElementById('actionOutage').addEventListener('click', () => {
+                showModal(ticketModal);
+                document.getElementById('ticketSubject').value = 'Power Outage Report';
+                document.getElementById('ticketCategory').value = 'Grid Connection';
+                document.getElementById('ticketPriority').value = 'Critical';
+            });
+
+            document.getElementById('actionContact').addEventListener('click', () => {
+                showNotification('Connecting you to support...', 'info');
+                setTimeout(() => {
+                    showNotification('Please call +91 1800-123-4567 for immediate assistance.', 'success');
+                }, 1000);
+            });
+
+            // Learn More Button
+            document.getElementById('learnMoreBtn').addEventListener('click', () => {
+                showNotification('EaaS allows you to use clean energy without owning equipment. We handle installation, maintenance, and DISCOM integration for you!', 'info');
+            });
+
+            // Refresh Data Button
+            document.getElementById('refreshData').addEventListener('click', () => {
+                updateRealTimeData();
+                showNotification('Dashboard data refreshed.', 'success');
+            });
+
+            // Export Data Button
+            document.getElementById('exportData').addEventListener('click', () => {
+                showNotification('Exporting data to CSV...', 'info');
+                setTimeout(() => {
+                    showNotification('Data exported successfully. Check your downloads.', 'success');
+                }, 1500);
+            });
+
+            // Close notifications
+            document.querySelectorAll('.notification-close').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.closest('.notification').classList.remove('show');
+                });
+            });
+        }
+
+        // ===== MODAL FUNCTIONS =====
+        function showModal(modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideModal(modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // ===== NOTIFICATION FUNCTIONS =====
+        function showNotification(message, type = 'success') {
+            let notification;
+            let messageElement;
+            
+            switch(type) {
+                case 'success':
+                    notification = successNotification;
+                    messageElement = document.getElementById('successMessage');
+                    break;
+                case 'warning':
+                    notification = warningNotification;
+                    messageElement = document.getElementById('warningMessage');
+                    break;
+                case 'error':
+                    notification = errorNotification;
+                    messageElement = document.getElementById('errorMessage');
+                    break;
+                default:
+                    notification = successNotification;
+                    messageElement = document.getElementById('successMessage');
+            }
+            
+            messageElement.textContent = message;
+            notification.classList.add('show');
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        // ===== DATE FIELD INITIALIZATION =====
+        function initializeDateFields() {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const formattedDate = tomorrow.toISOString().split('T')[0];
+            
+            document.getElementById('installDate').value = formattedDate;
+            document.getElementById('installDate').min = formattedDate;
+        }
+
+        // ===== REAL-TIME DATA UPDATES =====
+        function updateRealTimeData() {
+            // Generate random but realistic data
+            const solarGen = (40 + Math.random() * 5).toFixed(1);
+            const energyCons = (27 + Math.random() * 3).toFixed(1);
+            const savings = (3200 + Math.random() * 100).toFixed(0);
+            const carbonRed = (180 + Math.random() * 10).toFixed(0);
+            
+            // Update display
+            document.getElementById('solarGeneration').textContent = `${solarGen} kWh`;
+            document.getElementById('energyConsumption').textContent = `${energyCons} kWh`;
+            document.getElementById('costSavings').textContent = `₹ ${savings}`;
+            document.getElementById('carbonReduction').textContent = `${carbonRed} kg`;
+            
+            // Update progress bars with slight variations
+            document.querySelectorAll('.progress-fill').forEach((bar, index) => {
+                const baseWidths = [85, 65, 72, 60];
+                const variation = Math.random() * 5 - 2.5; // -2.5 to +2.5
+                const newWidth = Math.min(100, Math.max(0, baseWidths[index] + variation));
+                bar.style.width = `${newWidth}%`;
+                
+                // Update percentage text
+                const percentElement = bar.closest('.stat-progress').querySelector('.progress-info span:last-child');
+                if (percentElement) {
+                    percentElement.textContent = `${Math.round(newWidth)}%`;
+                }
+            });
+        }
+
+        function startDataUpdates() {
+            // Update data every 30 seconds
+            setInterval(updateRealTimeData, 30000);
+            
+            // Also update every minute to simulate IoT data streams
+            setInterval(() => {
+                // Simulate device status updates
+                const devices = document.querySelectorAll('.device-card');
+                devices.forEach(device => {
+                    if (Math.random() > 0.1) { // 90% chance device stays online
+                        const status = device.querySelector('.device-status');
+                        if (status && status.textContent === 'Offline') {
+                            status.textContent = 'Online';
+                            status.className = 'device-status status-online';
+                        }
+                        
+                        // Update device stats
+                        const stats = device.querySelectorAll('.device-stat-value');
+                        stats.forEach(stat => {
+                            const currentValue = parseFloat(stat.textContent);
+                            if (!isNaN(currentValue)) {
+                                const variation = currentValue * (Math.random() * 0.1 - 0.05); // -5% to +5%
+                                const newValue = Math.max(0, currentValue + variation);
+                                stat.textContent = stat.textContent.includes('₹') 
+                                    ? `₹ ${newValue.toFixed(0)}`
+                                    : newValue.toFixed(1);
+                            }
+                        });
+                    }
+                });
+            }, 60000);
+        }
+
+        // ===== WINDOW SCROLL EFFECTS =====
+        let lastScrollTop = 0;
+        const header = document.querySelector('header');
+
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Header shadow on scroll
+            if (scrollTop > 10) {
+                header.style.boxShadow = 'var(--shadow-lg)';
+            } else {
+                header.style.boxShadow = 'var(--shadow)';
+            }
+            
+            // Update active nav link based on scroll position
+            const sections = document.querySelectorAll('section[id]');
+            let currentSection = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionHeight = section.clientHeight;
+                
+                if (scrollTop >= sectionTop && scrollTop < sectionTop + sectionHeight) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            if (currentSection) {
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${currentSection}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            lastScrollTop = scrollTop;
+        });
+
+        // ===== RESIZE HANDLER =====
+        window.addEventListener('resize', function() {
+            // Update chart containers if needed
+            const chartContainers = document.querySelectorAll('.chart-container');
+            chartContainers.forEach(container => {
+                // Force chart redraw on resize
+                const canvas = container.querySelector('canvas');
+                if (canvas) {
+                    const chart = Chart.getChart(canvas);
+                    if (chart) {
+                        chart.resize();
+                    }
+                }
+            });
+        });
+
+        // ===== PRINT FUNCTIONALITY =====
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+P for print
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                window.print();
+            }
+        });
+
+        // ===== TOUCH SUPPORT FOR MOBILE =====
+        document.addEventListener('touchstart', function() {}, { passive: true });
+
+        // ===== LOADING INDICATORS =====
+        function showLoading(element) {
+            const originalHTML = element.innerHTML;
+            element.innerHTML = '<div class="loading"></div>';
+            element.setAttribute('data-original-html', originalHTML);
+            element.disabled = true;
+        }
+
+        function hideLoading(element) {
+            const originalHTML = element.getAttribute('data-original-html');
+            if (originalHTML) {
+                element.innerHTML = originalHTML;
+                element.removeAttribute('data-original-html');
+            }
+            element.disabled = false;
+        }
+
+        // ===== FORM VALIDATION =====
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function validatePhone(phone) {
+            const re = /^[\d\s\-\+\(\)]{10,}$/;
+            return re.test(phone);
+        }
+
+        // ===== DATA EXPORT =====
+        function exportToCSV(data, filename) {
+            const csv = data.map(row => row.join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // ===== ANIMATION HELPERS =====
+        function animateValue(element, start, end, duration) {
+            const range = end - start;
+            const increment = end > start ? 1 : -1;
+            const stepTime = Math.abs(Math.floor(duration / range));
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                element.textContent = current;
+                
+                if (current === end) {
+                    clearInterval(timer);
+                }
+            }, stepTime);
+        }
+
+        // ===== PERFORMANCE OPTIMIZATION =====
+        // Debounce function for resize events
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Throttle function for scroll events
+        function throttle(func, limit) {
+            let inThrottle;
+            return function() {
+                const args = arguments;
+                const context = this;
+                if (!inThrottle) {
+                    func.apply(context, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            };
+        }
+
+        // ===== ACCESSIBILITY =====
+        // Add keyboard navigation support
+        document.addEventListener('keydown', function(e) {
+            // Tab key navigation
+            if (e.key === 'Tab') {
+                // Ensure focus remains within modal when open
+                const activeModal = document.querySelector('.modal-overlay.active');
+                if (activeModal) {
+                    const focusableElements = activeModal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                    const firstElement = focusableElements[0];
+                    const lastElement = focusableElements[focusableElements.length - 1];
+                    
+                    if (e.shiftKey) {
+                        if (document.activeElement === firstElement) {
+                            lastElement.focus();
+                            e.preventDefault();
+                        }
+                    } else {
+                        if (document.activeElement === lastElement) {
+                            firstElement.focus();
+                            e.preventDefault();
+                        }
+                    }
+                }
+            }
+            
+            // Escape key closes modals
+            if (e.key === 'Escape') {
+                const activeModal = document.querySelector('.modal-overlay.active');
+                if (activeModal) {
+                    hideModal(activeModal);
+                }
+            }
+        });
+
+        // ===== OFFLINE DETECTION =====
+        window.addEventListener('online', function() {
+            showNotification('Connection restored. Syncing data...', 'success');
+            updateRealTimeData();
+        });
+
+        window.addEventListener('offline', function() {
+            showNotification('You are currently offline. Some features may be limited.', 'warning');
+        });
+
+        // ===== PROGRESSIVE ENHANCEMENT =====
+        // Check for modern browser features
+        if ('serviceWorker' in navigator) {
+            // Register service worker for PWA capabilities
+            window.addEventListener('load', function() {
+                // Service worker registration would go here in a production app
+            });
+        }
+
+        // Add CSS custom properties support fallback
+        if (!window.CSS || !CSS.supports('color', 'var(--test)')) {
+            // Fallback for browsers that don't support CSS custom properties
+            document.body.classList.add('no-css-vars');
+        }
+
+        // ===== FINAL INITIALIZATION =====
+        // Add fade-in animations for elements as they come into view
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe all elements with data-animate attribute
+        document.querySelectorAll('[data-animate]').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Initialize tooltips
+        document.querySelectorAll('[title]').forEach(el => {
+            // Simple tooltip implementation
+            el.addEventListener('mouseenter', function(e) {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = this.getAttribute('title');
+                document.body.appendChild(tooltip);
+                
+                const rect = this.getBoundingClientRect();
+                tooltip.style.left = `${rect.left + rect.width / 2}px`;
+                tooltip.style.top = `${rect.top - 10}px`;
+                tooltip.style.transform = 'translate(-50%, -100%)';
+                
+                this.setAttribute('data-tooltip-id', Date.now());
+            });
+            
+            el.addEventListener('mouseleave', function() {
+                const tooltips = document.querySelectorAll('.tooltip');
+                tooltips.forEach(tooltip => tooltip.remove());
+            });
+        });
+    </script>
+</body>
 </html>
