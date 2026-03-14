@@ -20,10 +20,11 @@ export function downloadText(content, filename) {
 
 // ── Shared: load jsPDF + autoTable ───────────────────────────────────────────
 async function loadJsPDF() {
-  const [{ jsPDF }] = await Promise.all([
+  const [{ jsPDF }, { applyPlugin }] = await Promise.all([
     import('jspdf'),
     import('jspdf-autotable'),
   ]);
+  applyPlugin(jsPDF);
   return jsPDF;
 }
 

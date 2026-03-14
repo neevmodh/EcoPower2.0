@@ -2,10 +2,11 @@
 // Single invoice + bulk "all invoices" export
 
 async function loadJsPDF() {
-  const [{ jsPDF }] = await Promise.all([
+  const [{ jsPDF }, { applyPlugin }] = await Promise.all([
     import('jspdf'),
     import('jspdf-autotable'),
   ]);
+  applyPlugin(jsPDF);
   return jsPDF;
 }
 
