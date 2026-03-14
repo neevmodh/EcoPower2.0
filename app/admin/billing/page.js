@@ -5,6 +5,7 @@ import { FileText, Banknote, Clock, Download, RefreshCw, Sparkles, CheckCircle }
 import Modal from '@/components/Modal';
 import AIAdvisor from '@/components/AIAdvisor';
 import { groqChat } from '@/lib/groqClient';
+import { downloadInvoicePDF, downloadAllInvoicesPDF } from '@/components/InvoicePDF';
 
 const btnPrimary = { padding: '0.7rem 1.4rem', background: '#22C55E', color: '#fff', border: 'none', borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 6 };
 
@@ -52,12 +53,8 @@ export default function BillingManagement() {
   const exportSelected = () => {
     if (selected.length === 0) { showToast('Select invoices to export', 'error'); return; }
     const toExport = invoices.filter(inv => selected.includes(inv.invoiceId));
-    const csv = ['Invoice ID,Location,Period Start,Period End,Amount,Status', ...toExport.map(inv => `${inv.invoiceId},${inv.locationId},${new Date(inv.billingPeriodStart).toLocaleDateString()},${new Date(inv.billingPeriodEnd).toLocaleDateString()},${inv.totalAmount},${inv.status}`)].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = `invoices_export_${Date.now()}.csv`; a.click();
-    URL.revokeObjectURL(url);
-    showToast(`Exported ${selected.length} invoices`);
+    downloadAllInvoicesPDF(toExport, 'Admin — All Invoices');
+    showToast(`Exported ${selected.length} invoices as PDF`);
   };
 
   const getAIInsights = async () => {
@@ -174,6 +171,7 @@ export default function BillingManagement() {
             {viewInvoice.status !== 'Paid' && (
               <button onClick={() => { markPaid(viewInvoice.invoiceId); setViewInvoice(null); }} style={{ ...btnPrimary, justifyContent: 'center', marginTop: 8, width: '100%' }}><CheckCircle size={16} />Mark as Paid</button>
             )}
+            <button onClick={() => downloadInvoicePDF(viewInvoice)} style={{ ...btnPrimary, background: '#0F172A', justifyContent: 'center', width: '100%' }}><Download size={16} />Download PDF</button>
           </div>
         )}
       </Modal>

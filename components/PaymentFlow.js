@@ -262,9 +262,19 @@ export default function PaymentFlow({ invoiceId, amount, onSuccess, onClose }) {
           </div>
           <button onClick={async () => {
             const { downloadInvoicePDF } = await import('@/components/InvoicePDF');
-            downloadInvoicePDF({ invoiceId, billingPeriod: new Date().toLocaleString('default', { month: 'short', year: 'numeric' }), energyUsedKwh: 0, baseAmount: Math.round(amount / 1.18), tax: amount - Math.round(amount / 1.18), discount: 0, totalAmount: amount, dueDate: new Date(), status: 'Paid' });
+            await downloadInvoicePDF({
+              invoiceId,
+              billingPeriod: new Date().toLocaleString('default', { month: 'short', year: 'numeric' }),
+              energyUsedKwh: 0,
+              baseAmount: Math.round(amount / 1.18),
+              tax: Math.round(amount - amount / 1.18),
+              discount: 0,
+              totalAmount: amount,
+              dueDate: new Date(),
+              status: 'Paid',
+            });
           }} style={{ width: '100%', padding: '0.875rem', background: '#f0fdf4', border: '1.5px solid #bbf7d0', borderRadius: 12, fontWeight: 700, cursor: 'pointer', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontSize: '0.9rem' }}>
-            <Loader size={16} /> Download Receipt PDF
+            ↓ Download Receipt PDF
           </button>
         </div>
       )}

@@ -4,6 +4,7 @@ import { Sun, Battery, Activity, Banknote, Leaf, Zap, TrendingUp, TrendingDown, 
 import { useAuth } from '@/context/AuthContext';
 import AIAdvisor from '@/components/AIAdvisor';
 import Modal from '@/components/Modal';
+import { downloadDashboardReport } from '@/components/ExportUtils';
 
 export default function ConsumerDashboard() {
   const { user } = useAuth();
@@ -295,8 +296,11 @@ export default function ConsumerDashboard() {
       )}
 
       <Modal open={reportModal} onClose={() => setReportModal(false)} title="Download Report">
-        <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>Your energy report is being generated. It will include all telemetry, billing, and sustainability data.</p>
-        <button onClick={() => setReportModal(false)} style={{ padding: '0.75rem 2rem', background: '#22C55E', color: 'white', border: 'none', borderRadius: 10, fontWeight: 700, cursor: 'pointer' }}>
+        <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>Your energy report will include all telemetry, billing, and sustainability data.</p>
+        <button onClick={async () => {
+          await downloadDashboardReport({ user, telemetry, invoices, carbon });
+          setReportModal(false);
+        }} style={{ padding: '0.75rem 2rem', background: '#22C55E', color: 'white', border: 'none', borderRadius: 10, fontWeight: 700, cursor: 'pointer' }}>
           Download PDF
         </button>
       </Modal>

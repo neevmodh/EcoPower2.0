@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import AIAdvisor from '@/components/AIAdvisor';
 import { Leaf, Sun, Award, Target, TrendingUp, Download } from 'lucide-react';
+import { downloadESGReport } from '@/components/ExportUtils';
 
 export default function EnterpriseSustainability() {
   const { user } = useAuth();
@@ -66,7 +67,8 @@ export default function EnterpriseSustainability() {
           <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: 0 }}>Corporate Sustainability</h1>
           <p style={{ color: '#64748b', margin: '0.25rem 0 0 0' }}>Track your organization's environmental impact and renewable energy transition</p>
         </div>
-        <button style={{ padding: '0.75rem 1.25rem', background: '#f0fdf4', border: '1.5px solid #bbf7d0', borderRadius: 10, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, color: '#16a34a', fontSize: '0.875rem' }}>
+        <button onClick={() => downloadESGReport({ carbonKg, trees, solar: data.solar, renewPct, esgScore, userLabel: 'Enterprise Account' })}
+          style={{ padding: '0.75rem 1.25rem', background: '#f0fdf4', border: '1.5px solid #bbf7d0', borderRadius: 10, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, color: '#16a34a', fontSize: '0.875rem' }}>
           <Download size={16} /> Export ESG Report
         </button>
       </div>

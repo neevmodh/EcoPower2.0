@@ -6,6 +6,7 @@ import { Check, Building2, Zap, Battery, Shield, Users, BarChart3, Globe, Plus, 
 import AIAdvisor from '@/components/AIAdvisor';
 import Modal from '@/components/Modal';
 import PaymentFlow from '@/components/PaymentFlow';
+import { downloadSubscriptionInvoicePDF } from '@/components/ExportUtils';
 
 const ENTERPRISE_PLANS = [
   {
@@ -106,17 +107,7 @@ export default function EnterpriseSubscription() {
     finally { setActionLoading(false); }
   };
 
-  const downloadInvoice = (inv) => {
-    const lines = ['ECOPOWER ENTERPRISE SERVICES', '============================',
-      `Invoice ID   : ${inv.invoiceId}`, `Plan         : ${inv.planName}`,
-      `Base Amount  : ₹${inv.base}`, `GST (18%)    : ₹${inv.tax}`, `Total        : ₹${inv.total}`,
-      `Generated    : ${new Date().toLocaleDateString()}`,
-    ];
-    const a = document.createElement('a');
-    a.href = 'data:text/plain,' + encodeURIComponent(lines.join('\n'));
-    a.download = `ecopower-enterprise-invoice-${Date.now()}.txt`;
-    a.click();
-  };
+  const downloadInvoice = (inv) => downloadSubscriptionInvoicePDF(inv, true);
 
   if (loading) return <div style={{ padding: '2rem', color: '#64748b' }}>Loading...</div>;
 

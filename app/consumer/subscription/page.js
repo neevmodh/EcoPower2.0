@@ -11,6 +11,7 @@ import {
 import AIAdvisor from '@/components/AIAdvisor';
 import Modal from '@/components/Modal';
 import PaymentFlow from '@/components/PaymentFlow';
+import { downloadSubscriptionInvoicePDF } from '@/components/ExportUtils';
 
 const STEPS = ['Select Plan', 'Confirm', 'Invoice', 'Payment', 'Success'];
 
@@ -199,23 +200,7 @@ export default function SubscriptionManagement() {
     finally { setActionLoading(false); }
   };
 
-  const downloadInvoice = (inv) => {
-    const lines = [
-      'ECOPOWER ENERGY SERVICES', '========================',
-      `Invoice ID   : INV-${(inv.invoiceId || '').slice(-6).toUpperCase()}`,
-      `Plan         : ${inv.planName || 'Solar Plan'}`,
-      inv.isPayg ? 'Type         : Pay As You Use (₹6.5/kWh)' : `Energy Limit : ${inv.maxKwh || 0} kWh`,
-      `Base Amount  : ₹${inv.base || 0}`,
-      `GST (18%)    : ₹${inv.tax || 0}`,
-      `Total        : ₹${inv.total || 0}`,
-      `Status       : ${inv.isPayg ? 'Activation Free' : 'Payment Pending'}`,
-      `Generated    : ${new Date().toLocaleDateString()}`,
-    ];
-    const a = document.createElement('a');
-    a.href = 'data:text/plain,' + encodeURIComponent(lines.join('\n'));
-    a.download = `ecopower-invoice-${Date.now()}.txt`;
-    a.click();
-  };
+  const downloadInvoice = (inv) => downloadSubscriptionInvoicePDF(inv, false);
 
   if (loading) return <div style={{ padding: '2rem', color: '#64748b' }}>Loading...</div>;
 

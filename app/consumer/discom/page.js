@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { CheckCircle2, Clock, Zap, TrendingUp, FileText, RefreshCw, ArrowUpRight, Download } from 'lucide-react';
 import AIAdvisor from '@/components/AIAdvisor';
+import { downloadDISCOMCertificate } from '@/components/ExportUtils';
 
 const STEPS = [
   { id: 1, label: 'Application Submitted',    date: '2026-01-15', done: true,  desc: 'Net-metering application submitted to DISCOM portal' },
@@ -20,11 +21,7 @@ export default function DiscomIntegration() {
     Array.from({ length: 20 }, (_, i) => ({ t: i, voltage: 231 + Math.random() * 2, frequency: 49.95 + Math.random() * 0.08, export: 10 + Math.random() * 4 }))
   );
 
-  const handleDownloadCertificate = () => {
-    const content = `EcoPower Net-Metering Certificate\n\nCertificate No: DISCOM/NM/2026/MH-4821\nValid Until: December 2028\nStatus: APPROVED\n\nInstallation Details:\n- Solar Capacity: 10 kW\n- Meter Type: Bi-directional\n- Grid Sync Date: 2026-02-18\n\nThis certificate confirms that the solar installation has been approved for net-metering by DISCOM.`;
-    const blob = new Blob([content], { type: 'text/plain' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'NetMetering_Certificate_DISCOM.txt'; a.click();
-  };
+  const handleDownloadCertificate = () => downloadDISCOMCertificate();
 
   useEffect(() => {
     const t = setInterval(() => {
