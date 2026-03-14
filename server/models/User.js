@@ -1,16 +1,17 @@
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
-    id: { type: String, required: true, unique: true },
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    role: { type: String, default: 'user' },
-    status: { type: String, default: 'active' },
-    company: { type: String },
-    phone: { type: String },
-    createdAt: { type: Date, default: Date.now },
-    walletBalance: { type: Number, default: 0 },
-    plan: { type: String, default: 'standard' },
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password_hash: { type: String, required: true },
+  phone: { type: String },
+  role: { type: String, enum: ['admin', 'consumer', 'enterprise'], required: true },
+  organization_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Organization', default: null },
+  status: { type: String, enum: ['active', 'suspended', 'pending'], default: 'active' },
+  created_at: { type: Date, default: Date.now }
 });
+
+userSchema.index({ organization_id: 1 });
+userSchema.index({ status: 1 });
 
 export const User = mongoose.model('User', userSchema);
