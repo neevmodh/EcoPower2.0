@@ -9,7 +9,7 @@
       }
     },
     {
-      "src": "next.config.mjs",
+      "src": "package.json",
       "use": "@vercel/next"
     }
   ],
