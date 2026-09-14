@@ -128,7 +128,7 @@ cp .env.example .env.local
 npm run seed:complete
 ```
 
-Creates: 3 users, 5 Ahmedabad locations, 10+ IoT devices, 6 months of telemetry, energy plans, 60 invoices, carbon stats, support tickets, subscriptions.
+Creates: 3 users, 5 Ahmedabad location, 10+ IoT devices, 6 months of telemetry, energy plans, 60 invoices, carbon stats, support tickets, subscriptions.
 
 ### 4. Start the Backend
 
