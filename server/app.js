@@ -25,18 +25,33 @@ const app = express();
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
-// Connect DB once (Vercel keeps functions warm between requests)
+// Health check stays up even when the database is down, and says which part is failing.
 let dbConnected = false;
-app.use(async (req, res, next) => {
+app.get('/api/health', async (req, res) => {
+  let database = 'ok';
   if (!dbConnected) {
-    await connectDB();
-    dbConnected = true;
+    try {
+      await connectDB();
+      dbConnected = true;
+    } catch {
+      database = 'unreachable';
+    }
   }
-  next();
+  res.status(database === 'ok' ? 200 : 503).json({ status: database === 'ok' ? 'ok' : 'degraded', database, message: 'EcoPower 2.0 API Running' });
 });
 
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'EcoPower 2.0 API Running' });
+// Connect DB once (Vercel keeps functions warm between requests).
+// If it fails, answer with JSON 503 instead of Express's HTML 500 page.
+app.use(async (req, res, next) => {
+  if (!dbConnected) {
+    try {
+      await connectDB();
+      dbConnected = true;
+    } catch {
+      return res.status(503).json({ error: 'database_unavailable', message: 'The database is unreachable right now. Please try again later.' });
+    }
+  }
+  next();
 });
 
 app.use('/api/users', userRoutes);
